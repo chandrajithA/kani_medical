@@ -91,29 +91,29 @@ WSGI_APPLICATION = 'kani_medical.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        "NAME": env("MYSQL_DATABASE"),
-        "USER": env("MYSQL_USER"),
-        "PASSWORD": env("MYSQL_PASSWORD"),
-        "HOST": env("MYSQL_HOST"),
-        "PORT": env("MYSQL_PORT"),
-    }
-}
-
-
-# import dj_database_url
-# import pymysql
-# pymysql.install_as_MySQLdb()
-
-
 # DATABASES = {
-#     'default': dj_database_url.config(
-#         default=os.environ.get("DATABASE_URL"),
-#         engine='django.db.backends.mysql',
-#     )
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         "NAME": env("MYSQL_DATABASE"),
+#         "USER": env("MYSQL_USER"),
+#         "PASSWORD": env("MYSQL_PASSWORD"),
+#         "HOST": env("MYSQL_HOST"),
+#         "PORT": env("MYSQL_PORT"),
+#     }
 # }
+
+
+import dj_database_url
+import pymysql
+pymysql.install_as_MySQLdb()
+
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.environ.get("DATABASE_URL"),
+        engine='django.db.backends.mysql',
+    )
+}
 
 
 # Password validation
