@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>User Wishlist - Kani Medical</title>
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/wishlist_page.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main>
+
+    <section class="categories-section">
+        <div class="wishlist-header">
+            <h2>Wishlist - ({{wishlist_items_count}})</h2>
+            <a href="{% url 'clearwishlist' %}" class="wishlistclear-btn">Clear Wishlist</a>
+        </div>
+    </section>
+
+    
+    <div class="categoryitemdisplayarea" id="productcontainer"> 
+        {% if wishlist_items %}
+        {% for wishlist_item in wishlist_items %}
+
+        <div class="product-card">
+            <a href="{% url 'product_detail_page' wishlist_item.product.id %}">
+            <div class="product-img">
+                <img src="{{wishlist_item.product.product_main_image.url}}" alt="{{wishlist_item.product.product_image_altername}}">
+                {% if wishlist_item.product.featured_option %}
+                <span class="badge {{wishlist_item.product.featured_option}}">{{wishlist_item.product.featured_option}}</span>
+                {% endif %}
+                <a href="{% url 'remove_from_wishlistcart' wishlist_item.product.id %}?next={{ request.get_full_path }}">
+                    <div class="wishlistbadge">
+                        <img src="{% static 'images/wishlist_active.png' %}" alt="">
+                    </div>
+                </a>
+            </div>
+            </a>
+            <div class="productdetailsarea">
+                <p class="productname">{{wishlist_item.product.product_name}}</p>
+                <p class="productshortdesc">{{wishlist_item.product.product_short_desc}}</p>
+                <div class="rating">
+                    {% for i in "12345" %}
+                    {% if forloop.counter <= wishlist_item.product.rating %}
+                        <img src="{% static 'images/star.png' %}" alt="" class="star-icon">
+                    {% else %}
+                        <img src="{% static 'images/empty_star.png' %}" alt="" class="star-icon">
+                    {% endif %}
+                    {% endfor %}
+                    <span>({{wishlist_item.product.rating}})</span>
+                    {% if wishlist_item.product.discount %}
+                    <span class="discountbadge">-{{wishlist_item.product.discount}}%</span>
+                    {% endif %}
+                </div>
+                
+                <div class="priceandbtnarea">
+                    <div class="price">
+                        {% if wishlist_item.product.discount %}
+                        <span class="new-price">₹{{wishlist_item.product.discounted_price|floatformat:2}}</span>
+                        <span class="old-price">₹{{wishlist_item.product.product_price|floatformat:2}}</span>
+                        {% else %}
+                        <span class="new-price">₹{{wishlist_item.product.product_price|floatformat:2}}</span>
+                        {% endif %}
+                    </div>
+                    {% if wishlist_item.product.id in cart_dict %}
+                        <a href="{% url 'remove_from_cart' wishlist_item.product.id %}?next={{ request.get_full_path }}" class="remove-from-cart"><img src="{% static 'images/cart_btn.png' %}" alt="" class="cartbtnimage">Remove</a>
+                    {% else %}
+                        <a href="{% url 'add_to_cart' wishlist_item.product.id %}?next={{ request.get_full_path }}" class="add-to-cart"><img src="{% static 'images/cart_btn.png' %}" alt="" class="cartbtnimage">Add</a>
+                    {% endif %}
+                </div>  
+            </div>
+        </div>
+
+        {% endfor %}
+        {% else %}
+            <img src="{% static 'images/noproduct.png' %}" class="noproductimage" alt="No products found">
+        {% endif %}
+</main>
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

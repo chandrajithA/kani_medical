@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}
+<title>Login - Kani Medical</title>
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/user_login_page.css' %}">
+{% endblock %}
+
+{% block content %}
+<main>
+    
+        <section class="signinarea">
+            {% if messages %}
+            {% for message in messages %}
+                <span {% if message.tags %} class="absolute {{ message.tags }} "{% endif %} id="absoluteerrortag">{{ message }}</span>
+            {% endfor %}
+            {% endif %}
+            <div class="signinContent">
+                <div class="signin-box">
+
+                    <p class="signinheading">Login to your Account</p>
+                    <p class="signinsubheading">Welcome back. Please enter your details</p>
+
+                    {% if messages %}
+                    {% for message in messages %}
+                    {% if message.level == 40 and "inactive" in message.message %}
+                        <div {% if message.tags %} class="{{ message.tags }} "{% endif %}>{{ message }}</div>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+
+                    {% if messages %}
+                    {% for message in messages %}
+                    {% if message.level == 25 %}
+                        <div {% if message.tags %} class="{{ message.tags }} "{% endif %}>{{ message }}</div>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                
+                    
+                    <form method="POST">
+                        
+                        {% csrf_token %}
+                        {% if next %}
+                            <input type="hidden" name="next" value="{{ next }}">
+                        {% endif %}
+                        <label for="signinusername" class="loginlabel">Email / Mobile Number</label><span class="requiredfieldastrick">*</span>
+                        <div class="signiniconrelativearea">
+                            <input type="text" id="signinusername" name="username" value="{{ prefill.username }}" placeholder="Enter email or mobile" autocomplete="on" required>
+                            {% if messages %}
+                            {% for message in messages %}
+                            {% if message.level == 40 and "Username" in message.message %}
+                                <div {% if message.tags %} class="{{ message.tags }} "{% endif %}>{{ message }}</div>
+                            {% endif %}
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                        <label for="signinpassword" class="loginlabel">Password</label><span class="requiredfieldastrick">*</span>
+                        <div class="signiniconrelativearea">
+                            <input type="password" id="signinpassword" name="password" value="{{ prefill.password }}" placeholder="Enter password" autocomplete="off" required>
+                            <img class="abssigninicons viewpass" id="passviewbtn" src="{% static 'images/viewpassword_icon.png' %}" alt="password view icon">   
+                        </div>
+                        {% if messages %}
+                        {% for message in messages %}
+                        {% if message.level == 40 and "Password" in message.message %}
+                            <div {% if message.tags %} class="{{ message.tags }} "{% endif %}>{{ message }}</div>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+
+                        <div class="loginoptionbox">
+                            <label class="loginlabel loginoptionarea">
+                                <input type="checkbox" name="remember_me"> Remember Me
+                            </label>
+                            <a href="{% url "password_reset" %}" class="recovery">Forget Password?</a>
+
+                        </div>
+                        
+                        
+                        <div class="signinbtnarea">
+                            <button type="submit" class="signinbtn">Login</button>
+                            <p class="othersigninreftxt">Or continue with</p>
+                            <div class="othersignoptarea">
+                                <a href="{% provider_login_url 'google' %}">
+                                    <div class="othersigninbtn">
+                                        <img class="googlelogo" src="{% static 'images/google_logo.webp' %}" alt="google logo image">
+                                    </div>
+                                </a>
+                                <a href="{% provider_login_url 'facebook' %}">
+                                    <div class="othersigninbtn">
+                                        <img class="facebooklogo" src="{% static 'images/facebook_logo.webp' %}" alt="facebook logo image">
+                                    </div>
+                                </a>
+                                {% comment %} <a href="">
+                                    <div class="othersigninbtn">
+                                        <img class="applelogo" src="{% static 'images/apple_logo.png' %}" alt="apple logo image">
+                                    </div>
+                                </a> {% endcomment %}
+                            </div>
+                            <span>Don't have an account? <a href="{% url "user_register" %}" class="signupbtn">Sign Up</a></span>
+                        </div>
+                        
+                    </form>
+                    
+
+                </div>
+            </div>
+        </section>
+    
+</main>
+{% endblock %}
+
+{% block script %}
+<script>
+            const signinpassword = document.getElementById("signinpassword");
+            const passviewbtn = document.getElementById("passviewbtn");
+            
+            
+
+            passviewbtn.addEventListener('click',()=>{
+                const src1 = "{% static 'images/viewpassword_icon.png' %}";
+                const src2 = "{% static 'images/hidepassword_icon.png' %}";
+
+               
+                if (passviewbtn.classList.contains("viewpass")){
+                    signinpassword.type = "text";
+                    passviewbtn.src = src2;
+                    passviewbtn.classList.remove("viewpass");
+                }
+                else{
+                    signinpassword.type = "password";
+                    passviewbtn.src = src1;
+                    passviewbtn.classList.add("viewpass");
+                    
+                }
+            })
+
+       
+
+        
+
+
+       
+    </script>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>About Us - Kani Medical</title>
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/aboutus_page.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main>
+
+    <section class="aboutus-section whoweare">  
+        <h2 class="aboutuspageheading">About Us</h2>
+        <div class="aboutus-container">
+            <div class="aboutus-text">
+                <p>Welcome to Kani Medical, your trusted partner in health and wellness. We are more than just a pharmacy – we are a healthcare destination dedicated to providing safe, reliable, and affordable medical solutions for you and your family, while offering expert guidance for your health needs. From prescription medicines and wellness supplements to personal care and medical essentials, we aim to be your one-stop healthcare partner, making quality healthcare accessible anytime, anywhere.</p> 
+            </div>
+            <div class="aboutus-image-wrapper whoweare">
+                <img src="{% static 'images/aboutus_image.png' %}" alt="">
+            </div>
+        </div>
+    </section>
+
+    <section class="mission-section">
+        <div class="container">
+            <h2 class="section-title">Our Mission & Values</h2>
+            <p class="section-subtitle">
+            We're committed to improving health outcomes through innovative<br>
+            pharmaceutical care and compassionate service
+            </p>
+
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-cardimagearea">
+                        <img src="{% static 'images/our_mission1.png' %}" alt="">
+                    </div>
+                    <h3>Patient First</h3>
+                    <p>Every decision we make is guided by what's best for our patients' health and wellbeing.</p>
+                </div>
+
+                <div class="value-card">
+                    <div class="value-cardimagearea">
+                        <img src="{% static 'images/our_mission2.png' %}" alt="">
+                    </div>
+                    <h3>Quality Care</h3>
+                    <p>We maintain the highest standards in pharmaceutical care and safety protocols.</p>
+                </div>
+
+                <div class="value-card">
+                    <div class="value-cardimagearea">
+                        <img src="{% static 'images/our_mission3.png' %}" alt="">
+                    </div>
+                    <h3>Innovation</h3>
+                    <p>We embrace technology and innovation to improve healthcare delivery and outcomes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

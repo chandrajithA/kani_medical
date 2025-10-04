@@ -1,0 +1,66 @@
+{% load static %}
+
+{% if products %}
+{% for product in products %}
+
+<div class="product-card">
+    <a href="{% url 'product_detail_page' product.id %}">
+    <div class="product-img">
+        <img src="{{product.product_main_image.url}}" alt="{{product.product_image_altername}}">
+        {% if product.featured_option %}
+        <span class="badge {{product.featured_option}}">{{product.featured_option}}</span>
+        {% endif %}
+        {% if product.id in wishlist_dict %}
+        <a href="{% url 'remove_from_wishlistcart' product.id %}?next={{ request.get_full_path }}">
+        <div class="wishlistbadge">
+            <img src="{% static 'images/wishlist_active.png' %}" alt="">
+        </div>
+        </a>
+        {% else %}
+        <a href="{% url 'add_to_wishlistcart' product.id %}?next={{ request.get_full_path }}">
+        <div class="wishlistbadge">
+            <img src="{% static 'images/empty_heart.png' %}" alt="">
+        </div>
+        </a>
+        {% endif %}
+    </div>
+    </a>
+    <div class="productdetailsarea">
+        <p class="productname">{{product.product_name}}</p>
+        <p class="productshortdesc">{{product.product_short_desc}}</p>
+        <div class="rating">
+            {% for i in "12345" %}
+            {% if forloop.counter <= product.rating %}
+                <img src="{% static 'images/star.png' %}" alt="" class="star-icon">
+            {% else %}
+                <img src="{% static 'images/empty_star.png' %}" alt="" class="star-icon">
+            {% endif %}
+            {% endfor %}
+            <span>({{product.rating}})</span>
+            {% if product.discount %}
+            <span class="discountbadge">-{{product.discount}}%</span>
+            {% endif %}
+        </div>
+        
+        <div class="priceandbtnarea">
+            <div class="pricearea">
+                {% if product.discount %}
+                <span class="new-price">₹{{product.discounted_price|floatformat:2}}</span>
+                <span class="old-price">₹{{product.product_price|floatformat:0}}</span>
+                {% else %}
+                <span class="new-price">₹{{product.product_price|floatformat:2}}</span>
+                {% endif %}
+            </div>
+            {% if product.id in cart_dict %}
+                <a href="{% url 'remove_from_cart' product.id %}?next={{ request.get_full_path }}" class="remove-from-cart"><img src="{% static 'images/cart_btn.png' %}" alt="" class="cartbtnimage">Remove</a>
+            {% else %}
+                <a href="{% url 'add_to_cart' product.id %}?next={{ request.get_full_path }}" class="add-to-cart"><img src="{% static 'images/cart_btn.png' %}" alt="" class="cartbtnimage">Add</a>
+            {% endif %}
+        </div>  
+    </div>
+</div>
+
+{% endfor %}
+{% else %}
+    <img src="{% static 'images/noproduct.png' %}" class="noproductimage" alt="No products found">
+{% endif %}

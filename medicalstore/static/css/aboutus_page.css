@@ -1,0 +1,212 @@
+    .aboutus-section {
+        padding: 40px;
+        min-width: 320px;
+    }
+
+    .aboutuspageheading {
+        font-size: 50px;
+        color: var(--black);
+        font-weight: 800;
+        margin-bottom: 40px;
+        cursor: default;
+        text-align: center;
+        
+    }
+
+    .aboutus-container {
+        display: flex;
+        margin: auto;
+        flex-wrap: wrap;
+        row-gap: 30px;
+    }
+
+    .aboutus-text {
+        flex: 1;
+        display: flex;
+        padding-right: 20px;
+        
+    }
+
+    .aboutus-text p {
+        font-size: 26px;
+        line-height: 1.8;
+        font-weight: 500;
+        margin-bottom: 5px;
+        cursor: default;
+    }
+
+    
+
+    .aboutus-image-wrapper {
+        flex: 1;
+        overflow: hidden;
+        box-sizing: border-box;
+        align-self: flex-start ;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    
+
+    .aboutus-image-wrapper img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        
+    }
+
+    .aboutus-section.content{
+        padding-top: 10px;
+    }
+
+    
+
+    @media screen and (max-width:1024.98px) {
+        .aboutus-section {
+            padding: 40px 30px;
+        }
+        .aboutus-container {
+            flex-direction: column;
+        }
+
+        
+        .aboutus-text{
+            padding-right: 0px;
+        }
+        
+        .aboutus-image-wrapper{
+            align-self: center;
+        }
+        
+    }
+
+    
+
+    @media screen and (max-width:768.98px) {
+        .aboutus-section {
+            padding: 40px 20px;
+        }
+        
+        
+        .aboutuspageheading{
+            font-size: 40px;
+        }
+
+        .aboutus-text {
+            font-size: 24px;
+        }
+        .aboutus-text p {
+            font-size: 22px;
+        }
+
+        
+    }
+
+
+    @media screen and (max-width:425.98px) {
+
+        .aboutus-section {
+            padding: 20px 20px;
+        }
+
+         .aboutuspageheading {
+            font-size: 42px;
+            margin-bottom: 20px;
+            
+            
+        }
+
+        .aboutus-text p {
+            font-size: 18px;
+        }
+        
+    
+    }
+
+    @media screen and (max-width:320.98px) {
+        
+        
+        .aboutus-text p {
+            font-size: 16px;
+        }
+
+        
+    }
+
+
+
+
+
+
+
+
+
+
+    /* General Section Styling */
+.mission-section {
+  padding: 60px 20px;
+}
+
+.section-title {
+    text-align: center;
+  font-size: 40px;
+  font-weight: 600;
+  margin-bottom: 40px;
+  color: var(--black);
+}
+
+.section-subtitle {
+    text-align: center;
+  font-size: 24px;
+  color: var(--grey);
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+/* Grid Layout */
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  max-width: 1200px;
+  margin:80px auto;
+}
+
+/* Card Style */
+.value-card {
+  border: 2px solid var(--light-blue);
+  border-radius: 12px;
+  padding: 25px;
+  transition: all 0.3s ease;
+}
+
+.value-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Icon Style */
+.value-cardimagearea {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 30px;
+  & img{
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Text in Card */
+.value-card h3 {
+  font-size: 28px;
+  color: #111;
+  margin-bottom: 20px;
+}
+
+.value-card p {
+  font-size: 18px;
+  color: #555;
+  line-height: 1.4;
+}

@@ -1,0 +1,664 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Product Detail - Kani Medical</title>
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/product_detail_page.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main>
+    <section class="pagecontainerholder">
+        {% if messages %}
+        {% for message in messages %}
+            <span {% if message.tags %} class="absolute {{ message.tags }} "{% endif %} id="absoluteerrortag">{{ message }}</span>
+        {% endfor %}
+        {% endif %}
+        {% if product %}
+        <span id="errortag" class="errortag"></span>
+        <div class="product-container"> 
+            <div class="imagedisplayarea">
+                <div class="image-section">
+                    <img src="{{ product.product_main_image.url }}" id="mainImage" alt="{{product.product_image_altername}}" class="main-image">
+                </div>
+                <div class="thumbnails">
+                    {% if product.product_image1 %}
+                    <div class="thumbnailsimagearea">
+                        <img src="{{product.product_image1.url}}" alt="{{product.product_image_altername}}" data-src="{{ product.product_image1.url }}" class="thumb">
+                    </div>
+                    {% endif %}
+                    {% if product.product_image2 %}
+                    <div class="thumbnailsimagearea">
+                       <img src="{{product.product_image2.url}}" alt="{{product.product_image_altername}}" data-src="{{ product.product_image2.url }}" class="thumb"> 
+                    </div>
+                    {% endif %}
+                    {% if product.product_image3 %}
+                    <div class="thumbnailsimagearea">
+                        <img src="{{product.product_image3.url}}" alt="{{product.product_image_altername}}" data-src="{{ product.product_image3.url }}" class="thumb">
+                    </div>
+                    {% endif %}
+                    {% if product.product_image4 %}
+                    <div class="thumbnailsimagearea">
+                        <img src="{{product.product_image4.url}}" alt="{{product.product_image_altername}}" data-src="{{ product.product_image4.url }}" class="thumb">
+                    </div> 
+                    {% endif %} 
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h1>{{product.product_name}}</h1>
+                <p class="description">{{product.product_desc}}</p>
+
+                <div class="rating">
+                    {% for i in "12345" %}
+                    {% if forloop.counter <= product.rating %}
+                        <img src="{% static 'images/star.png' %}" alt="" class="star-icon">
+                    {% else %}
+                        <img src="{% static 'images/empty_star.png' %}" alt="" class="star-icon">
+                    {% endif %}
+                    {% endfor %}
+                    <span class="productrating">({{product.rating}})</span> 
+                    <span class="productreviewcount">{{review_count}} reviews</span>                  
+                    {% if product.available_stock != 0 %}
+                    <p class="instockdisplay">In Stock</p>
+                    {% endif %}
+                </div>
+                
+
+                <p class="price">
+                {% if product.discount and product.discounted_price != product.product_price %}
+                    <span class="new-price">₹{{product.discounted_price}}</span>
+                    <span class="strikethrough">₹{{product.product_price}}</span> 
+                    <span class="discountrate"> {{product.discount}}% OFF</span>
+                {% else %}
+                    <span class="new-price">₹ {{product.product_price}}</span> 
+                {% endif %}                
+                
+                
+                {% if product.available_stock == 0 %}
+                    <p class="out-of-stock">Out of Stock</p>
+
+                {% elif productincart  %}
+
+                    <form id="removeorbuyform" method="POST" action="{% url 'removefromcart_or_buyproduct' productincart.product.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ productincart.product.id }}">
+                        <input type="hidden" name="quantity" value="{{ productincart.quantity }}">
+                    </form>
+
+                    
+                    <div class="purchasearea">
+                        <div class="quantity">
+                            <p>Quantity: </p>
+                            <form id="decreaseqty" method="post" action="{% url 'decrease_cartitem_quantity' productincart.product.id %}">
+                            {% csrf_token %}
+                            
+                            <button form="decreaseqty" type="submit">-</button>
+                            </form>
+                            
+                            <span>{{productincart.quantity}}</span>
+
+                            <form id="increaseqty" method="post" action="{% url 'increase_cartitem_quantity' productincart.product.id %}">
+                            {% csrf_token %}
+                            <button form="increaseqty" type="submit">+</button>
+                            </form>
+                        </div>
+                        <div class="purchasebtnarea">
+                            <button form="removeorbuyform" class="product-buy-btn" type="submit" name="action" value="buy_now"><img src="{% static 'images/shoppingbag.png' %}" class="herobtnimage" alt="">Buy Now</button>
+                            <button form="removeorbuyform" class="product-addcart-btn" type="submit" name="action" value="remove_from_cart"><img src="{% static 'images/cart_btn.png' %}" class="herobtnimage" alt="">Remove</button>
+                            <div class="wishlistbadge">
+                                <img src="{% static 'images/empty_heart.png' %}" alt="">
+                            </div>
+                        </div>
+
+                    </div>   
+
+                    {% else %}
+
+                    <form id="addorbuyform" method="POST" action="{% url 'addtocart_or_buyproduct' product.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" id="productId" value="{{ product.id }}">
+                        <input type="hidden" name="quantity" id="quantityInput" value="1">
+                    </form>
+
+                    <div class="purchasearea">
+                        <div class="quantity">
+                            <p>Quantity: </p>
+                            <form id="decreaseqty" method="post">
+                            
+                            <button form="decreaseqty" id="decreaseQty" type="button">-</button>
+                            </form>
+                            
+                            <span id="qtyValue"></span>
+                            <form id="increaseqty" method="post">
+                           
+                            <button form="increaseqty" id="increaseQty" type="button">+</button>
+                            </form>
+                        </div>
+                            
+                        
+                        <div class="purchasebtnarea">
+                            
+                            <button form="addorbuyform" class="product-buy-btn" type="submit" name="action" value="buy_now"><img src="{% static 'images/shoppingbag.png' %}" class="herobtnimage" alt="">Buy Now</button>
+                            <button form="addorbuyform" class="product-addcart-btn" type="submit" name="action" value="add_to_cart"><img src="{% static 'images/cart_btn.png' %}" class="herobtnimage" alt="">Add to Cart</button>
+                            <div class="wishlistbadge">
+                                <img src="{% static 'images/empty_heart.png' %}" alt="">
+                            </div>
+                        </div>
+                       
+                    </div>
+                    {% endif %}
+                <div class="categories-flex">
+                            
+                    <div class="category-card">
+                        <img src="{% static 'images/shield-half.png' %}" alt="" class="categoryimage">
+                        <p>100 % Genuine</p>
+                    </div>
+                    <div class="category-card">
+                        <img src="{% static 'images/lock.png' %}" alt="" class="categoryimage">
+                        <p>Secure Payment</p>
+                    </div>
+                    <div class="category-card">
+                        <img src="{% static 'images/truck.png' %}" alt="" class="categoryimage">
+                        <p>Fast Delivery</p>
+                    </div>
+                    
+                </div>   
+            </div>
+        </div>
+        {% endif %}
+
+    </section>
+
+    <section class="product-description-section">
+        <h2 class="section-title">Product Description</h2>
+        <p class="product-description-text">
+            Paracetamol 500mg tablets provide effective relief from pain and fever. 
+            Each tablet contains 500mg of paracetamol, making it suitable for treating 
+            headaches, muscle aches, arthritis, backache, toothaches, colds, and fevers.
+        </p>
+
+        <h3 class="sub-title">Key Benefits:</h3>
+        <ul class="benefits-list">
+            <li>Fast-acting pain relief</li>
+            <li>Reduces fever effectively</li>
+            <li>Gentle on stomach</li>
+            <li>Suitable for long-term use</li>
+        </ul>
+        
+    </section>
+
+
+
+    <h1 class="ratingsectionheading">Customer Review</h1>
+    <section class="ratingandreview">
+        
+        <div class="displayreviewarea">
+            {% if reviews %}
+            {% for review in reviews %}
+            {% if not review.disable %}
+            <div class="reviewcontainer">
+                <div class="review-rating">
+                    <div class="star-box">
+                        <span class="rating">{{ review.rating }}</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                </div>
+                <div class="review-content">
+                    <h2>{{ review.user.name }}</h2>
+                    <h4 class="review-title">{{ review.rating_label }}</h4>
+                    <p class="review-text">{{ review.comment|linebreaksbr }}</p>
+                    <p class="review-date">Posted on: {{ review.posted_on|date:"d M, Y" }}</p>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% else %}
+            <p>Post your review as first review for this product</p>
+            {% endif %}
+        </div>
+        
+
+        <div class="ratingarea">
+            
+            <div class="averagestar-box">
+                <span class="rating">{{product.rating|floatformat:1}}</span>
+                <span class="star">&#9733;</span>
+            </div>
+
+            <div class="ratinginputarea">
+                <div class="ratingaveragesarea">
+
+                    <div class="ratingpercentagearea">
+
+                        <div class="ratingaveragetitle">
+                            <p>Very Good</p>
+                        </div>
+
+                        <div class="ratingaveragebar">
+                            <div class="progressbar verygood" style="width: {{rating_percentages.5}}% ">
+
+                            </div>
+                        </div>
+
+                        <div class="ratingaveragecount">
+                            <p>{{ratings_data.rating5}}</p>
+                        </div>
+
+                    </div>
+
+                    <div class="ratingpercentagearea">
+
+                        <div class="ratingaveragetitle">
+                            <p>Good</p>
+                        </div>
+
+                        <div class="ratingaveragebar">
+                            <div class="progressbar good" style="width:{{rating_percentages.4}}%">
+
+                            </div>
+                        </div>
+
+                        <div class="ratingaveragecount">
+                            <p>{{ratings_data.rating4}}</p>
+                        </div>
+
+                    </div>
+
+                    <div class="ratingpercentagearea">
+
+                        <div class="ratingaveragetitle">
+                            <p>Ok</p>
+                        </div>
+
+                        <div class="ratingaveragebar">
+                            <div class="progressbar ok" style="width:{{rating_percentages.3}}%">
+
+                            </div>
+                        </div>
+
+                        <div class="ratingaveragecount">
+                            <p>{{ratings_data.rating3}}</p>
+                        </div>
+
+                    </div>
+
+                    <div class="ratingpercentagearea">
+
+                        <div class="ratingaveragetitle">
+                            <p>Bad</p>
+                        </div>
+
+                        <div class="ratingaveragebar">
+                            <div class="progressbar bad" style="width:{{rating_percentages.2}}%">
+
+                            </div>
+                        </div>
+
+                        <div class="ratingaveragecount">
+                            <p>{{ratings_data.rating2}}</p>
+                        </div>
+
+                    </div>
+
+                    <div class="ratingpercentagearea">
+
+                        <div class="ratingaveragetitle">
+                            <p>Very Bad</p>
+                        </div>
+
+                        <div class="ratingaveragebar">
+                            <div class="progressbar verybad" style="width:{{rating_percentages.1}}%">
+
+                            </div>
+                        </div>
+
+                        <div class="ratingaveragecount">
+                            <p>{{ratings_data.rating1}}</p>
+                        </div>
+
+                    </div>
+                    
+
+                </div>
+                <form id="reviewform" method="post" action="{% url 'submit_review' product.id %}">
+                    {% csrf_token %}
+                    <div class="star-rating">
+                        
+                        {% for i in "54321" %}
+                            <input type="radio" name="rating" id="star{{ i }}" value="{{ i }}" required>
+                            <label for="star{{ i }}">&#9733;</label>
+                        {% endfor %}
+                        
+                    </div>
+                    <textarea name="comment" placeholder="Write your review here" required></textarea>
+                    <button type="submit">Submit</button>
+                        
+                </form>
+            </div>
+
+        </div>
+        
+
+    </section>
+
+
+    {% if products %}
+    <div class="featuredproductsdisplayarea">
+        <h3 class="featuredproductareatitle">Related Products</h3>
+        
+        <div class="featuredproductdisplayarea">
+        <div class="featuredproduct" id="slider1">
+          <button onclick="scrollCarousel('slider1','left')" class="productleftscrollbtn" id="slider1leftscrollbtn">←</button>
+            <div class="slider">
+
+             
+              {% for product in products %}
+              
+              <div class="product-card">
+                <a href="{% url 'product_detail_page' product.id %}">
+                <div class="product-img">
+                  <img src="{{product.product_main_image.url}}" alt="{{product.product_image_altername}}">
+                  {% if product.featured_option %}
+                  <span class="badge {{product.featured_option}}">{{product.featured_option}}</span>
+                  {% endif %}
+                  {% if product.id in wishlist_dict %}
+                  <a href="{% url 'remove_from_wishlistcart' product.id %}?next={{ request.get_full_path }}">
+                    <div class="wishlistbadge">
+                      <img src="{% static 'images/wishlist_active.png' %}" alt="">
+                    </div>
+                  </a>
+                  {% else %}
+                  <a href="{% url 'add_to_wishlistcart' product.id %}?next={{ request.get_full_path }}">
+                    <div class="wishlistbadge">
+                      <img src="{% static 'images/empty_heart.png' %}" alt="">
+                    </div>
+                  </a>
+                  {% endif %}
+                </div>
+                </a>
+                <p class="productname">{{product.product_name}}</p>
+                <p class="productshortdesc">{{product.product_short_desc}}</p>
+                <div class="rating">
+                    {% for i in "12345" %}
+                    {% if forloop.counter <= product.rating %}
+                        <img src="{% static 'images/star.png' %}" alt="" class="star-icon">
+                    {% else %}
+                        <img src="{% static 'images/empty_star.png' %}" alt="" class="star-icon">
+                    {% endif %}
+                    {% endfor %}
+                    <span>({{product.rating}})</span>
+                    {% if product.discount %}
+                    <span class="discountbadge">-{{product.discount}}%</span>
+                    {% endif %}
+                </div>
+                
+                  <div class="priceandbtnarea">
+                    <div class="pricearea">
+                      {% if product.discount %}
+                      <span class="new-price">₹{{product.discounted_price|floatformat:2}}</span>
+                      <span class="old-price">₹{{product.product_price|floatformat:0}}</span>
+                      {% else %}
+                      <span class="new-price">₹{{product.product_price|floatformat:2}}</span>
+                      {% endif %}
+                    </div>
+                    {% if product.id in cart_dict %}
+                        <a href="{% url 'remove_from_cart' product.id %}?next={{ request.get_full_path }}" class="remove-from-cart"><img src="{% static 'images/cart_btn.png' %}" alt="" class="cartbtnimage">Remove</a>
+                    {% else %}
+                        <a href="{% url 'add_to_cart' product.id %}?next={{ request.get_full_path }}" class="add-to-cart"><img src="{% static 'images/cart_btn.png' %}" alt="" class="cartbtnimage">Add</a>
+                    {% endif %}
+                  </div>  
+              </div>
+            
+              {% endfor %}
+
+            </div>
+            <button onclick="scrollCarousel('slider1','right')" class="productrightscrollbtn" id="slider1rightscrollbtn">→</button>
+        </div>
+        </div>
+    </div>
+    {% endif %}
+
+    
+
+
+</main>
+{% endblock %}
+  
+{% block script %}
+  
+<script>
+
+        
+           
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const mainImage = document.getElementById("mainImage");
+            const thumbnails = document.querySelectorAll(".thumb");
+
+            thumbnails.forEach(t => t.classList.remove("active"));
+
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener("click", function () {
+                    // Swap main image src and thumbnail src
+                    const temp = mainImage.src;
+                    mainImage.src = this.src;
+                    this.src = temp;
+
+                    // Swap data-src as well if you want to keep lazy-loading intact
+                    const tempData = mainImage.dataset.src;
+                    mainImage.dataset.src = this.dataset.src;
+                    this.dataset.src = tempData;
+
+                    // Remove active-thumb from all
+                    thumbnails.forEach(t => t.classList.remove("active"));
+
+                    // Add active to current clicked
+                    this.classList.add("active");
+                });
+            });
+        });
+
+
+            
+
+
+                
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const errorTag = document.getElementById("absoluteerrortag");
+
+            if (errorTag && getComputedStyle(errorTag).display === "block") {
+                // Trigger fade out after 2s
+                setTimeout(() => {
+                    errorTag.classList.add("hide");
+                }, 2000);
+
+                // Then remove from layout after 1s of fading
+                setTimeout(() => {
+                    errorTag.style.display = "none";
+                }, 3000);
+            }
+        });
+
+
+
+        
+
+
+
+        const productIdElem = document.getElementById("productId");
+    if (productIdElem) {
+        const productId = productIdElem.value;
+        const qtyDisplay = document.getElementById("qtyValue");
+        const qtyInput = document.getElementById("quantityInput");
+        const increaseBtn = document.getElementById("increaseQty");
+        const decreaseBtn = document.getElementById("decreaseQty");
+        const addBuyForm = document.getElementById("addorbuyform");
+
+        let qty = parseInt(sessionStorage.getItem("KMselectedQty")) || 1;
+
+        // --- Helpers
+        function updateQtyDisplay() {
+            qtyDisplay.textContent = qty;
+            qtyInput.value = qty;
+            sessionStorage.setItem("KMselectedQty", qty);
+        }
+
+        function restoreState() {
+            // Clear session if product differs
+            const savedProductId = sessionStorage.getItem("KMproductID");
+            if (savedProductId !== productId) {
+                sessionStorage.removeItem("KMproductID");
+                sessionStorage.removeItem("KMselectedQty");
+                sessionStorage.setItem("KMproductID", productId);
+                qty = 1;
+                
+            }
+
+        
+            // Restore qty
+            const savedQty = parseInt(sessionStorage.getItem("KMselectedQty"));
+            if (!isNaN(savedQty) && savedQty > 0) {
+                qty = savedQty;
+            }
+            updateQtyDisplay();
+        }
+
+        
+        restoreState();
+        
+
+        // --- Quantity handling
+        increaseBtn.addEventListener("click", () => {
+            qty += 1;
+            updateQtyDisplay();
+        });
+
+        decreaseBtn.addEventListener("click", () => {
+            if (qty > 1) {
+                qty -= 1;
+                updateQtyDisplay();
+            }
+        });
+
+         
+    }
+
+
+            
+
+
+        const removeOrBuyForm = document.getElementById("removeorbuyform");
+
+            if (removeOrBuyForm) {
+                removeOrBuyForm.addEventListener("submit", function () {
+                    sessionStorage.removeItem("KMselectedSize");
+                    sessionStorage.removeItem("KMselectedQty");
+                    sessionStorage.removeItem("KMproductID"); 
+                });
+            }
+
+
+
+    window.addEventListener("resize", ()=> checkOverflow("slider1"));
+
+    // 🌿 Auto move carousel every 3 seconds with reset at end
+    let autoScrollInterval;
+
+
+    // Optional: pause auto-scroll on hover for better UX
+    const slider1 = document.getElementById('slider1');
+    slider1.addEventListener('mouseenter', stopAutoScroll);
+    slider1.addEventListener('mouseleave', () => startAutoScroll('slider1'));
+
+    window.addEventListener("beforeunload", () => {
+            sessionStorage.setItem("scrollPosition", window.scrollY);
+            sessionStorage.setItem("scrollPage", window.location.pathname);
+        });
+
+    // Restore scroll position on reload
+    window.addEventListener("load", () => {
+        const savedPage = sessionStorage.getItem("scrollPage");
+        const savedScrollY = sessionStorage.getItem("scrollPosition");
+
+        if (savedPage === window.location.pathname && savedScrollY !== null) {
+            setTimeout(() => {
+            window.scrollTo(0, parseInt(savedScrollY));
+            }, 1);
+        }
+    });
+
+
+
+  //to scroll the products in main page if it has more products
+  function scrollCarousel(sliderId,direction) {
+      const container = document.getElementById(sliderId);
+      const itemWidth = 300;
+
+      if (direction === "left") {
+          container.scrollBy({ left: -itemWidth, behavior: "smooth" });
+      } else {
+          container.scrollBy({ left: itemWidth, behavior: "smooth"});
+      }
+  }
+
+  function checkOverflow(sliderid) {
+    const slider = document.getElementById(sliderid);
+    const leftBtn = document.getElementById(sliderid+"leftscrollbtn");
+    const rightBtn = document.getElementById(sliderid+"rightscrollbtn");
+
+    
+    if (slider.scrollWidth > slider.clientWidth) {
+        leftBtn.style.display = "block";
+        rightBtn.style.display = "block";
+
+    } else {
+        leftBtn.style.display = "none";
+        rightBtn.style.display = "none";
+ 
+    }
+  }
+
+
+  function startAutoScroll(sliderId) {
+      stopAutoScroll(); // avoid multiple intervals
+      autoScrollInterval = setInterval(() => {
+        const container = document.getElementById(sliderId);
+        const maxScrollLeft = container.scrollWidth - container.clientWidth;
+
+        // If we're close to the end, reset to start smoothly
+        if (Math.ceil(container.scrollLeft) >= maxScrollLeft) {
+          container.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          scrollCarousel(sliderId, 'right');
+        }
+      }, 3000);
+    }
+
+    function stopAutoScroll() {
+      if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+      }
+    }
+
+    // Start auto-scroll for this slider
+    checkOverflow("slider1");
+    startAutoScroll('slider1');
+
+       
+       
+
+
+        
+        
+        
+
+    </script>
+
+{% endblock %}

@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Products - Kani Medical</title>
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/products_page.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main>
+
+    
+
+    <section class="categories-section">
+        <h2>Category - {% if selected_category_name %}{{selected_category_name}}{% else %}All Products{% endif %}</h2>
+        <div class="sortingoptionarea">
+            <div class="sortingoptiondisplay">
+                <p>Sort By: </p>
+                <div class="custom-dropdown">
+                    
+                    <div class="selected-option">
+                        <span id="sortingoptiontextarea">{% if selected_sort_option == 'price_low_to_high' %}Price - Low to High{% elif selected_sort_option == 'price_high_to_low' %}Price - High to Low{% elif selected_sort_option == 'offer_low_to_high' %}Offer - Low to High{% elif selected_sort_option == 'offer_high_to_low' %}Offer - High to Low{% else %}Recommended{% endif %}</span>
+                        <img src="{% static 'images/downarrow-black.png' %}">
+                    </div>
+                    <ul class="dropdown-options">
+                        <li value="recommended">Recommended</li>
+                        <li value="price_low_to_high">Price - Low to High</li>
+                        <li value="price_high_to_low">Price - High to Low</li>
+                        <li value="offer_low_to_high">Offer - Low to High</li>
+                        <li value="offer_high_to_low">Offer - High to Low</li>
+                    </ul>
+                </div>
+            </div>
+                <button class="clearfilterbtn" id='clearfilterbtn'>Clear Filter</button>
+            </div>
+
+        
+        
+        <div class="categories-flex">
+            <a href="{% url 'products_page' %}">
+                <div class="category-card {% if not selected_category_id %}active{% endif %}">
+                    <p>All Products</p>
+                </div>
+            </a>
+            {% if categories %}
+            {% for category in categories %}
+            <a href="{% url 'products_page' category.id %}">
+                <div class="category-card {% if selected_category_id == category.id %}active{% endif %}">
+                    <p>{{category.category_name}}</p>
+                </div>
+            </a>
+            {% endfor %}
+            {% endif %}
+        </div>
+
+    </section>
+
+    
+    <div class="categoryitemdisplayarea" id="productcontainer"> 
+        
+
+            {% include 'partials/product_list.html' %}
+            <img src="{% static 'images/noproduct.png' %}" class="noproductimage" id="nosearchproductfoundimage" style="display:none;" alt="No products found">
+    </div>
+    
+    
+    
+   
+
+</main>
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById("productSearchInput");
+        const clearBtn = document.getElementById("clearSearchInput");
+        const productCards = document.querySelectorAll(".product-card");
+        const noProductImage = document.getElementById("nosearchproductfoundimage")
+        const productContainer = document.getElementById('productcontainer');
+
+        if (searchInput) {
+            searchInput.focus();   // 👈 auto focus when page loads
+        }
+
+        if (!searchInput) return; // Safety if searchbar isn't present
+
+         // ✅ If there are no products in this category, disable live search
+        if (productCards.length === 0) {
+            searchInput.disabled = true;
+            searchInput.placeholder = "No product to search"
+            if (noProductImage) noProductImage.style.display = "none";
+            return;
+        }
+
+        
+
+
+
+        // ✅ Live filtering
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+
+            // 🔄 Always reset all cards first
+            productCards.forEach(card => card.style.display = "block");
+
+            if (query === "") {
+            // 👉 If input is empty, show all products again
+                noProductImage.style.display = "none";
+                return;
+            }
+
+            let visibleCount = 0;
+
+            productCards.forEach(card => {
+                const nameEl = card.querySelector(".productname");
+                const name = nameEl ? nameEl.textContent.toLowerCase() : "";
+                if (name.includes(query)) {
+                    visibleCount++;
+                    
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            // ✅ Show/hide "no products found" image
+            noProductImage.style.display = visibleCount === 0 ? "block" : "none";
+        });
+
+        // ✅ Clear input button
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                searchInput.value = "";
+                productCards.forEach(card => card.style.display = "block");
+                noProductImage.style.display = "none";  // hide image on clear
+                searchInput.focus();
+            });
+        }
+    }); 
+
+
+
+    const clearfilterbtn = document.getElementById("clearfilterbtn");
+
+    clearfilterbtn.addEventListener('click',()=>{
+        window.location.href="{% url 'products_page' %}";
+    });
+
+
+    const dropdown = document.querySelector('.custom-dropdown');
+    const selected = dropdown.querySelector('.selected-option');
+    const sortingoptiontextarea = document.getElementById("sortingoptiontextarea");
+    const options = dropdown.querySelectorAll('.dropdown-options li');
+
+    // Toggle dropdown
+    selected.addEventListener('click', () => {
+        dropdown.classList.toggle('open');
+    });
+
+    // Handle option selection
+    options.forEach(option => {
+        option.addEventListener('click', () => {
+        const value = option.getAttribute('value');
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('sort', value);
+        window.location.href = currentUrl.toString();  // Redirect with sort param
+        
+        });
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove('open');
+        }
+    });
+
+    window.addEventListener("beforeunload", () => {
+            sessionStorage.setItem("scrollPosition", window.scrollY);
+            sessionStorage.setItem("scrollPage", window.location.pathname);
+        });
+
+    // Restore scroll position on reload
+    window.addEventListener("load", () => {
+        const savedPage = sessionStorage.getItem("scrollPage");
+        const savedScrollY = sessionStorage.getItem("scrollPosition");
+
+        if (savedPage === window.location.pathname && savedScrollY !== null) {
+            setTimeout(() => {
+            window.scrollTo(0, parseInt(savedScrollY));
+            }, 1);
+        }
+    });
+
+    
+</script>
+
+{% endblock %}

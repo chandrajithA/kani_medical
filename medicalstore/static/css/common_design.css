@@ -1,0 +1,146 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: 'Urbanist', sans-serif;
+    
+    
+}
+html{
+    min-width: 320px;
+}
+
+html, body {
+    height: 100vh;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    scroll-behavior: smooth;
+    margin-top: 106px; 
+    
+}
+
+
+
+
+main {
+    flex: 1; 
+    
+}
+
+
+a {
+    text-decoration: none;
+}
+
+.absolute.error{
+    position: absolute;
+    top: -2%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--red);
+    color: var(--white);
+    padding: 10px;
+    font-size: 18px;
+    z-index: 1001;
+}
+
+.absolute.success{
+    position: absolute;
+    top: -2%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--mid-green);
+    color: var(--white);
+    padding: 10px;
+    font-size: 18px;
+    z-index: 1001;
+}
+
+.error{
+    color: var(--red);
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.success{
+     text-align:center;
+     color:var(--green);
+     font-size:16px;
+     margin-bottom: 10px;
+}
+
+.requiredfieldastrick {
+  color: var(--red);
+  margin-left: 4px;
+  cursor: none;
+}
+
+.messageconfirmation{
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  position: absolute;
+  background-color: var(--green);
+  color: var(--white);
+  padding: 5px;
+  margin: 0px auto 15px auto;
+  top: 25px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  & img{
+    width: 15px;
+    height: 15px;
+    margin-right: 10px;
+    margin-top: 10px;
+  }
+}
+
+:root {
+  /* Define your color variables inside :root */
+  --main-blue: #2697F6;
+  --light-blue: #2697F3;
+  --greenish-blue: #14dac2;
+  --pale-blue: #f1f5ff;
+  --light-greenish-blue: #ddfcf8;
+  --pale-yellow:#FEF9C3;
+  --white:#FFFFFF;
+  --black: #000000;
+  --red: #FF0000;
+  --green: #008000;
+  --mid-green: #52d652;
+  --light-green: #e4ffed;
+  --grey:#6f6f6f;
+  --light-grey:#a3a3a3;
+  --light-black:#404040;
+  --pink: rgb(255, 205, 214);
+}
+
+@media screen and (max-width: 1200.98px) {
+    
+    body {
+        margin-top: 173px; 
+    }
+}
+
+@media screen and (max-width: 600.98px) {
+    
+    body {
+        margin-top: 203px; 
+    }
+}
+
+@media screen and (max-width:425.98px) {
+    .absolute.error{
+        font-size: 14px;
+    }
+
+    .absolute.success{
+        font-size: 14px;
+    }
+}

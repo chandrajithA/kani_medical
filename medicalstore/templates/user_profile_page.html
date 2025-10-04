@@ -1,0 +1,368 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>User Profile - Kani Medical</title>
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/user_profile_page.css' %}">
+{% endblock %}
+
+{% block content %}
+<main>
+
+<section class="profiledetailssection">
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.level == 25 %}
+            <span {% if message.tags %} class="absolute {{ message.tags }} "{% endif %} id="absoluteerrortag">{{ message }}</span>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+        <div>
+            <h1 class="profiledetailpageheading">Personal Information</h1>
+        </div>
+
+    {% if user.is_authenticated %}
+        <div class="container">
+            <div class="left-panel">
+
+                <div class="avatar">
+                    <form id="change_profilepicture" method="post" enctype="multipart/form-data" action="{% url 'user_profile_details_edit' %}">
+                    {% csrf_token %}
+                        {% if user.user_profile_picture and user.user_profile_picture.name %}
+                        <img src="{{user.profile_picture_url}}" alt="{{user.user_profile_picture_label}}">
+                        {% else %}
+                        <img src="{% static 'images/user_image_default.png' %}" alt="{{user.user_profile_picture_label}}">
+                        {% endif %}
+                        <label for="profile_pic_input" class="edit-icon">&#9998;</label>
+                        <input type="file" id="profile_pic_input" name="profile_picture" accept="image/*" required hidden hidden onchange="document.getElementById('change_profilepicture').submit();">
+                        <input type="hidden" name="action" value="edit-profilepicture">
+                    </form>
+                    {% if messages %}
+                    {% for message in messages %}
+                    {% if message.level == 40 and "Profile Picture" in message.message %}
+                        <span {% if message.tags %} class="{{ message.tags }} "{% endif %}>{{ message }}</span>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                </div>
+                
+
+                <div class="field-group">
+                
+                    <div class="labelfield">
+                        <label for="name">Name</label>
+                        <a href="#" class="edit-btn" data-field="name">Edit</a>
+                    </div>
+                    
+                    <div class="editable">
+                        <form id="changename" method="POST" action="{% url 'user_profile_details_edit' %}">
+                            {% csrf_token %}
+                            <input type="text" id="name" name="name" value="{{user.name|default:''}}" readonly>
+                            <button form="changename" type="submit" class="save-btn name" id="save-btnname" name="action" value="edit-name">Save</button>
+                        </form>
+                    </div>
+                    {% if messages %}
+                    {% for message in messages %}
+                    {% if message.level == 40 and "Name" in message.message %}
+                        <span {% if message.tags %} class="{{ message.tags }} "{% endif %}>{{ message }}</span>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+
+                </div>
+
+                <div class="field-group">
+
+                    <div class="labelfield">
+                        <label for="gender">Gender</label>
+                        <a href="#" class="edit-btn" data-field="gender">Edit</a>
+                    </div>
+                    
+                    <div class="editable">
+                        <form id="changegender" method="POST" action="{% url 'user_profile_details_edit' %}">
+                        {% csrf_token %}
+
+                            <select type="text" id="gender" name="gender" disabled>
+                                <option {% if not user.gender %}selected{% endif %}>Select</option>
+                                <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if user.gender == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if user.gender == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                            <button type="submit" form="changegender" class="save-btn gender" id="save-btngender" name="action" value="edit_gender">Save</button>
+
+                        </form>
+                    </div>
+                    {% if messages %}
+                    {% for message in messages %}
+                    {% if message.level == 40 and "Gender" in message.message %}
+                        <span {% if message.tags %} class="{{ message.tags }} "{% endif %}>{{ message }}</span>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+
+                </div>
+
+                <div class="field-group">
+
+                    <div class="labelfield">
+                        <label for="email">Email</label>
+                        <a href="#" class="edit-btn" data-field="email">Edit</a>
+                    </div>
+                    
+                    <div class="editable">
+                        <form id="changeemail" method="POST" action="{% url 'user_profile_details_edit' %}">
+                        {% csrf_token %}
+                            <input type="email" id="email" name="email" value="{{user.email|default:''}}" readonly>
+                            <button type="submit" form="changeemail" class="save-btn email" id="save-btnemail" name="action" value="edit_email">Save</a>
+                        </form>
+                    </div>
+                    {% if messages %}
+                    {% for message in messages %}
+                    {% if message.level == 40 and "Email ID" in message.message %}
+                        <span {% if message.tags %} class="{{ message.tags }} "{% endif %}>{{ message }}</span>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+
+                </div>
+
+                <div class="multiplefield-container">
+
+                    <div class="multiplefield-container-item">
+
+                        <div class="field-group">
+
+                            <div class="labelfield">
+                                <label for="phone">Phone</label>
+                                <a href="#" class="edit-btn" data-field="phone">Edit</a>
+                            </div>
+                            
+                            <div class="editable">
+                                <form id="changephone" method="POST" action="{% url 'user_profile_details_edit' %}">
+                                {% csrf_token %}
+                                    <input type="tel" id="phone" name="phone" value="{{user.phone|default:''}}" readonly>
+                                    
+                                    <button form="changephone" type="submit" class="save-btn phone" id="save-btnphone" name="action" value="edit_phone">Save</button>
+                                </form>
+                            </div>
+                            {% if messages %}
+                            {% for message in messages %}
+                            {% if message.level == 40 and "Phone number" in message.message %}
+                                <span {% if message.tags %} class="{{ message.tags }} "{% endif %}>{{ message }}</span>
+                            {% endif %}
+                            {% endfor %}
+                            {% endif %}
+
+                        </div>
+                    
+                    </div>
+
+                    <div class="multiplefield-container-item">
+
+                        <div class="labelfield">
+                            <label for="pincode">Pincode</label>
+                            <a href="#" class="edit-btn" data-field="pincode">Edit</a>
+                        </div>
+                        
+                        <div class="editable">
+                            <form id="changepincode" method="POST" action="{% url 'user_profile_details_edit' %}">
+                            {% csrf_token %}
+                                <input id="pincode" name="pincode" value="{{user.pincode|default:''}}" readonly>
+                                <button type="submit" form="changepincode" class="save-btn pincode" id="save-btnpincode" name="action" value="edit_pincode" data-field="pincode">Save</button>
+                            </form>
+                        </div>
+                        {% if messages %}
+                        {% for message in messages %}
+                        {% if message.level == 40 and "Pincode" in message.message %}
+                            <span {% if message.tags %} class="{{ message.tags }} "{% endif %}>{{ message }}</span>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                
+
+                <div class="address-section">
+
+                    <div class="field-group">
+
+                        <div class="labelfield">
+                            <label for="address">Address</label>
+                            <a href="#" class="edit-btn" data-field="address">Edit</a>
+                        </div>
+                        
+                        <div class="editable">
+                            <form id="changeadddress" method="POST" action="{% url 'user_profile_details_edit' %}">
+                            {% csrf_token %}
+                                <textarea id="address" row="4" name="address" readonly>{{user.address|default:''}}</textarea>
+                                <button type="submit" form="changeadddress" class="save-btn address" id="save-btnaddress" name="action" value="edit_address" data-field="address">Save</button>
+                            </form>
+                        </div>
+                        {% if messages %}
+                        {% for message in messages %}
+                        {% if message.level == 40 and "Address" in message.message %}
+                            <span {% if message.tags %} class="{{ message.tags }} "{% endif %}>{{ message }}</span>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                        
+                    </div>  
+
+                </div>
+
+                <div class="multiplefield-container">
+
+                    <div class="multiplefield-container-item">
+
+                        <div class="labelfield">
+                            <label for="city">City</label>
+                            <a href="#" class="edit-btn" data-field="city">Edit</a>
+                        </div>
+                        
+                        <div class="editable">
+                            <form id="changecity" method="POST" action="{% url 'user_profile_details_edit' %}">
+                            {% csrf_token %}
+                                <input id="city" name="city" value="{{user.city|default:''}}" readonly>
+                                <button type="submit" form="changecity" class="save-btn city" id="save-btncity" name="action" value="edit_city" data-field="city">Save</button>
+                            </form>
+                        </div>
+                        {% if messages %}
+                        {% for message in messages %}
+                        {% if message.level == 40 and "City" in message.message %}
+                            <span {% if message.tags %} class="{{ message.tags }} "{% endif %}>{{ message }}</span>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+
+                    </div>
+
+                    <div class="multiplefield-container-item">
+
+                        <div class="labelfield">
+                            <label for="state">State</label>
+                            <a href="#" class="edit-btn" data-field="state">Edit</a>
+                        </div>
+                        
+                        <div class="editable">
+                            <form id="changestate" method="POST" action="{% url 'user_profile_details_edit' %}">
+                            {% csrf_token %}
+                                <input id="state" name="state" value="{{user.state|default:''}}" readonly>
+                                <button type="submit" form="changestate" class="save-btn state" id="save-btnstate" name="action" value="edit_state" data-field="state">Save</button>
+                            </form>
+                        </div>
+                        {% if messages %}
+                        {% for message in messages %}
+                        {% if message.level == 40 and "State" in message.message %}
+                            <span {% if message.tags %} class="{{ message.tags }} "{% endif %}>{{ message }}</span>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+
+                    </div>
+
+                    
+
+                </div>
+
+                <a href="{% url 'user_logout' %}">
+                    <div class="logoutbtn">
+                        <img src="{% static 'images/door_icon.png' %}" alt="logout icon">
+                        <span>Log out</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="right-panel">
+
+            <h3>My Orders</h3><hr>
+
+                <a href="" class=><p>My Order History</p></a>
+                <a href="{% url 'order_search_page' %}"><p>Track Order</p></a>
+
+            <hr>
+
+            <div class="stuff">
+                <h4>My Stuff</h4>
+                <a href=""><p>My Reviews & Ratings</p></a>
+            </div>
+
+            
+            </div>
+        </div>
+    {% endif %}
+    
+    </section>
+</main>
+{% endblock %}
+
+{% block script %}
+
+<script>
+
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const field = this.dataset.field;
+                const input = document.getElementById(field);
+                const savebtn = document.querySelector(`.${field}`);
+                const allEditButtons = document.querySelectorAll('.edit-btn');
+
+                // If we're entering edit mode
+                if (input.readOnly || input.disabled) {
+                    // Hide all other edit buttons
+                    allEditButtons.forEach(otherBtn => {
+                        if (otherBtn !== this) {
+                            otherBtn.style.display = 'none';
+                        }
+                    });
+
+                    // Enable current input
+                    if (input.readOnly) input.readOnly = false;
+                    if (input.disabled) input.disabled = false;
+
+                    input.focus();
+                    this.innerHTML = `<img src="{% static 'images/close_icon_round.png' %}" alt="close button icon" style="width:25px">`;
+                    savebtn.style.display = "block";
+                } 
+                // If we're closing edit mode
+                else {
+                    input.readOnly = true;
+                    input.disabled = true;
+                    this.textContent = 'Edit';
+                    savebtn.style.display = "none";
+
+                    // Show all other edit buttons again
+                    allEditButtons.forEach(otherBtn => {
+                        otherBtn.style.display = 'inline';
+                    });
+                }
+            });
+        });
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const errorTag = document.getElementById("absoluteerrortag");
+
+            if (errorTag && getComputedStyle(errorTag).display === "block") {
+                // Trigger fade out after 2s
+                setTimeout(() => {
+                    errorTag.classList.add("hide");
+                }, 2000);
+
+                // Then remove from layout after 1s of fading
+                setTimeout(() => {
+                    errorTag.style.display = "none";
+                }, 3000);
+            }
+        });
+
+            
+  </script>
+
+{% endblock %}

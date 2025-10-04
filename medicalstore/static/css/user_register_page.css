@@ -1,0 +1,208 @@
+.signuparea{ 
+    min-width: 300px; 
+    padding: 10px;
+}
+
+.signupContent{
+    margin: 20px auto;
+    background: var(--white);
+    border-radius: 20px;
+    max-width: 600px;
+    min-width: 300px;
+}
+
+
+.signin-box {
+    width: 100%;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+} 
+
+.signin-box .signinheading{
+    font-size: 28px;
+    color: var(--black);
+    font-weight: 600;
+    text-align: center;
+}
+
+
+
+.signin-box .signinsubheading{
+    font-size: 24px;
+    color: var(--grey);
+    text-align: center;
+    margin: 20px 0 30px 0;
+}
+
+
+.signin-box .loginlabel{
+    font-size: 20px;
+}
+
+.signin-box input {
+    width: 100%;
+    margin: 15px 0px;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--light-blue);
+    box-shadow: 0 2px 2px rgba(0,0,0,0.2);
+}
+
+.signin-box input::placeholder {
+    font-size: 16px;
+    color: var(--light-grey)
+}
+
+.signin-box input:focus{
+    outline: 2px solid var(--greenish-blue);
+}
+
+
+.signin-box .signiniconrelativearea{
+    position: relative;
+
+} 
+
+.signin-box .abssigninicons{
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    top: 50%;
+    right:10px;
+    transform: translateY(-50%);
+    display: block;
+} 
+ 
+
+.signin-box .signinbtnarea{
+    margin: 30px 0 0px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 15px;
+} 
+
+.signin-box .signinbtn{
+    background: linear-gradient(to right,var(--main-blue) 35%,  var(--greenish-blue) 100%);
+    color: var(--white);
+    width: 100%;
+    padding: 15px 0px;
+    border: none;
+    overflow: hidden;
+    font-size: 18px;
+    border-radius: 10px;
+    font-weight: 700;
+    box-shadow: 0 2px 2px rgba(0,0,0,0.2);
+    cursor: pointer;
+} 
+
+.signin-box .othersigninreftxt{
+    font-size: 20px;
+    font-weight: 100;
+    margin: 15px 0px;
+} 
+
+.signin-box .othersignoptarea{
+    display: flex;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+} 
+
+.signin-box .othersignoptarea .othersigninbtn{
+    border: 1px solid var(--light-blue);
+    border-radius: 10px;
+    width: 90px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} 
+
+.signin-box .othersignoptarea .othersigninbtn img{
+    display: block;
+    cursor:pointer
+
+}
+
+.signin-box .othersignoptarea .othersigninbtn .googlelogo{
+    width: 30px;
+    height: 30px;
+}
+
+.signin-box .othersignoptarea .othersigninbtn .facebooklogo{
+    width: 32px;
+    height: 32px;
+}
+
+.signin-box .othersignoptarea .othersigninbtn .applelogo{
+    width: 25px;
+    height: 25px;
+}
+
+.signupbtn{
+    color: var(--main-blue);
+}
+
+
+    @media screen and (max-width: 425.98px) {
+        .signin-box {
+            padding: 15px;
+        }
+        .signin-box .signinheading{
+            font-size: 24px;
+            
+        }
+        .signin-box .signinsubheading{
+            font-size: 20px;
+        }
+        .signin-box .loginlabel{
+            font-size: 18px;
+        }
+        .signin-box input {
+            padding: 15px;
+        }
+        .signin-box input::placeholder {
+            font-size: 14px;
+        }
+        .signin-box .signinbtnarea{
+            margin: 15px 0 0px 0;
+        }
+        .signin-box .signinbtn{
+            font-size: 16px;
+        }
+        .signin-box .othersigninreftxt{
+            font-size: 18px;
+        }
+    }
+
+    @media screen and (max-width: 375.98px) {
+        .signin-box .othersignoptarea .othersigninbtn{
+            width: 70px;
+        }
+    }
+
+    @media screen and (max-width: 320.98px) {
+        
+        .signin-box .signinheading{
+            font-size: 22px;
+            
+        }
+        .signin-box .signinsubheading{
+            font-size: 18px;
+        }
+        .signin-box .loginlabel{
+            font-size: 16px;
+        }
+        .signin-box input {
+            padding: 14px;
+        }
+        .signin-box input::placeholder {
+            font-size: 14px;
+        }
+        
+        
+    }
+

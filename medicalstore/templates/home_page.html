@@ -1,0 +1,365 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Home - Kani Medical</title>
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/home_page.css' %}">
+{% endblock %}
+
+{% block content %}
+<main>
+
+    <section class="herosection" style="background: url('{% static "images/hero_section_image.png" %}') no-repeat center center/cover;">
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.level == 25 %}
+            <span {% if message.tags %} class="messageconfirmation"{% endif %} id="absoluteerrortag"><img src="{% static 'images/check-circle.png' %}" alt="">{{ message }}</span>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+        <div class="overlay"></div>
+        <div class="hero-content">
+        <h1>Your Trusted Online <br><span>Medical Store</span></h1>
+        <p>Affordable, Genuine & Fast Delivery - Get all your healthcare needs delivered to your doorstep</p>
+        <div class="btn-group">
+            <a href="{% url 'products_page' %}" class="btn primary"><img src="{% static 'images/shoppingbag.png' %}" class="herobtnimage" alt="">Shop Now</a>
+            <a href="#categories-section" class="btn secondary"><img src="{% static 'images/table.png' %}" class="herobtnimage" alt="">Explore Categories</a>
+        </div>
+        </div>
+    </section>
+
+   
+    <section class="categories-section" id="categories-section">
+      <h2>Shop by Categories</h2>
+      <div class="categories-flex">
+          {% if categories %}
+          {% for category in categories %}
+          <div class="category-card" {% if category.category_background_color == 'pink' %}style="--bg-color1: #ffecf4ff; --bg-color2: #fbd5e5ff;"{% elif category.category_background_color == 'blue' %}style="--bg-color1: #DCE9FF; --bg-color2: #c8d7f2ff;"{% elif category.category_background_color == 'violet' %}style="--bg-color1: #DCE9FF; --bg-color2: #c8d7f2ff;"{% elif category.category_background_color == 'orange' %}style="--bg-color1: #fefad7ff; --bg-color2: #ffe5b8ff;"{% elif category.category_background_color == 'green' %}style="--bg-color1: #e0ffdeff; --bg-color2: #ccffc8ff;"{% elif category.category_background_color == 'light red' %}style="--bg-color1: #fef2e1ff; --bg-color2: #ffd4b5ff;"{% endif %} onclick="categorynavsection({{category.id}})">
+            <img src="{{category.category_image.url}}" class="categoryimage" alt="{{category.category_image_altername}}">
+            <p>{{category.category_name}}</p>
+          </div>
+          {% endfor %}
+          {% endif %}
+      </div>
+    </section>
+
+
+    <section class="why-choose">
+        <h2>Why Choose Kani Medical</h2>
+
+        <div class="features">
+        <div class="feature-card" >
+            <div class="whychooseimagearea" style="background-color: rgb(206, 254, 206);">
+              <img src="{% static 'images/check-circle.png' %}" class="whychooseimage" alt="">
+            </div>
+            <h3>Genuine Products</h3>
+            <p>100% authentic medicines and healthcare products</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="whychooseimagearea" style="background-color: rgb(215, 245, 255);">
+              <img src="{% static 'images/truck.png' %}" class="whychooseimage" alt="">
+            </div>
+            <h3>Fast Delivery</h3>
+            <p>Same day delivery in metro cities</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="whychooseimagearea" style="background-color: rgb(255, 238, 207);">
+              <img src="{% static 'images/dollar.png' %}" class="whychooseimage" alt="">
+            </div>
+            <h3>Affordable Prices</h3>
+            <p>Best prices with regular discounts</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="whychooseimagearea" style="background-color: rgb(255, 218, 255);">
+              <img src="{% static 'images/headphone-mic.png' %}" class="whychooseimage" alt="">
+            </div>
+            <h3>24/7 Support</h3>
+            <p>Round the clock customer assistance</p>
+        </div>
+        </div>
+    </section>
+
+    <div class="featuredproductsdisplayarea"  >
+        <h3 class="featuredproductareatitle">Featured Products</h3>
+        
+        <div class="featuredproductdisplayarea">
+        <div class="featuredproduct" id="slider1">
+          <button onclick="scrollCarousel('slider1','left')" class="productleftscrollbtn" id="slider1leftscrollbtn">←</button>
+            <div class="slider">
+
+              {% if products %}
+              {% for product in products %}
+              
+              <div class="product-card">
+                <a href="{% url 'product_detail_page' product.id %}">
+                <div class="product-img">
+                  <img src="{{product.product_main_image.url}}" alt="{{product.product_image_altername}}">
+                  {% if product.featured_option %}
+                  <span class="badge {{product.featured_option}}">{{product.featured_option}}</span>
+                  {% endif %}
+                  {% if product.id in wishlist_dict %}
+                  <a href="{% url 'remove_from_wishlistcart' product.id %}?next={{ request.get_full_path }}">
+                    <div class="wishlistbadge">
+                      <img src="{% static 'images/wishlist_active.png' %}" alt="">
+                    </div>
+                  </a>
+                  {% else %}
+                  <a href="{% url 'add_to_wishlistcart' product.id %}?next={{ request.get_full_path }}">
+                    <div class="wishlistbadge">
+                      <img src="{% static 'images/empty_heart.png' %}" alt="">
+                    </div>
+                  </a>
+                  {% endif %}
+                </div>
+                </a>
+                <p class="productname">{{product.product_name}}</p>
+                <p class="productshortdesc">{{product.product_short_desc}}</p>
+                <div class="rating">
+                    {% for i in "12345" %}
+                    {% if forloop.counter <= product.rating %}
+                        <img src="{% static 'images/star.png' %}" alt="" class="star-icon">
+                    {% else %}
+                        <img src="{% static 'images/empty_star.png' %}" alt="" class="star-icon">
+                    {% endif %}
+                    {% endfor %}
+                    <span>({{product.rating}})</span>
+                    {% if product.discount %}
+                    <span class="discountbadge">-{{product.discount}}%</span>
+                    {% endif %}
+                </div>
+                
+                  <div class="priceandbtnarea">
+                    <div class="pricearea">
+                      {% if product.discount %}
+                      <span class="new-price">₹{{product.discounted_price|floatformat:2}}</span>
+                      <span class="old-price">₹{{product.product_price|floatformat:0}}</span>
+                      {% else %}
+                      <span class="new-price">₹{{product.product_price|floatformat:2}}</span>
+                      {% endif %}
+                    </div>
+                    {% if product.id in cart_dict %}
+                        <a href="{% url 'remove_from_cart' product.id %}?next={{ request.get_full_path }}" class="remove-from-cart"><img src="{% static 'images/cart_btn.png' %}" alt="" class="cartbtnimage">Remove</a>
+                    {% else %}
+                        <a href="{% url 'add_to_cart' product.id %}?next={{ request.get_full_path }}" class="add-to-cart"><img src="{% static 'images/cart_btn.png' %}" alt="" class="cartbtnimage">Add</a>
+                    {% endif %}
+                  </div>  
+              </div>
+            
+              {% endfor %}
+              {% endif %}
+
+              
+
+            </div>
+            <button onclick="scrollCarousel('slider1','right')" class="productrightscrollbtn" id="slider1rightscrollbtn">→</button>
+        </div>
+        </div>
+    </div>
+
+    
+
+
+    <div class="reviews-section">
+        <h2>Customer Reviews</h2>
+        <p>What our customers say about us</p>
+        <div class="reviews-container" id="reviews-container">
+            <div class="review-card">
+                <img src="https://i.pravatar.cc/50?img=1" alt="Sarah Johnson">
+                <h3>Sarah Johnson</h3>
+                <div class="stars">★★★★★</div>
+                <p>"Excellent service and genuine products. Fast delivery and great customer support. Highly recommended!"</p>
+            </div>
+            <div class="review-card">
+                <img src="https://i.pravatar.cc/50?img=2" alt="Michael Chen">
+                <h3>Michael Chen</h3>
+                <div class="stars">★★★★★</div>
+                <p>"Best prices in the market with authentic medicines. The website is easy to navigate and ordering is simple."</p>
+            </div>
+            <div class="review-card">
+                <img src="https://i.pravatar.cc/50?img=3" alt="Emma Davis">
+                <h3>Emma Davis</h3>
+                <div class="stars">★★★★★</div>
+                <p>"Trusted pharmacy with professional service. They have everything I need for my family's healthcare needs."</p>
+            </div>
+
+            <div class="review-card">
+                <img src="https://i.pravatar.cc/50?img=3" alt="Emma Davis">
+                <h3>Emma Davis</h3>
+                <div class="stars">★★★★★</div>
+                <p>"Trusted pharmacy with professional service. They have everything I need for my family's healthcare needs."</p>
+            </div>
+            <div class="review-card">
+                <img src="https://i.pravatar.cc/50?img=3" alt="Emma Davis">
+                <h3>Emma Davis</h3>
+                <div class="stars">★★★★★</div>
+                <p>"Trusted pharmacy with professional service. They have everything I need for my family's healthcare needs."</p>
+            </div>
+
+            
+            <!-- Add more review cards as needed -->
+        </div>
+    </div>
+
+    <section class="faq-section">
+      <h2 class="faq-title">Frequently Asked Questions</h2>
+
+      <div class="faq-card">
+        <h3 class="faq-question">Are all medicines genuine and FDA approved?</h3>
+        <p class="faq-answer">
+          Yes, all our medicines are sourced directly from authorized distributors and are FDA approved with proper certifications.
+        </p>
+      </div>
+
+      <div class="faq-card">
+        <h3 class="faq-question">Are all medicines genuine and FDA approved?</h3>
+        <p class="faq-answer">
+          Yes, all our medicines are sourced directly from authorized distributors and are FDA approved with proper certifications.
+        </p>
+      </div>
+
+      <div class="faq-card">
+        <h3 class="faq-question">Are all medicines genuine and FDA approved?</h3>
+        <p class="faq-answer">
+          Yes, all our medicines are sourced directly from authorized distributors and are FDA approved with proper certifications.
+        </p>
+      </div>
+    </section>
+
+
+</main>
+{% endblock %}
+
+{% block script %}
+<script>
+
+
+  window.addEventListener("resize", ()=> checkOverflow("slider1"));
+
+    // 🌿 Auto move carousel every 3 seconds with reset at end
+    let autoScrollInterval;
+
+
+    // Optional: pause auto-scroll on hover for better UX
+    const slider1 = document.getElementById('slider1');
+    slider1.addEventListener('mouseenter', stopAutoScroll);
+    slider1.addEventListener('mouseleave', () => startAutoScroll('slider1'));
+
+    window.addEventListener("beforeunload", () => {
+            sessionStorage.setItem("scrollPosition", window.scrollY);
+            sessionStorage.setItem("scrollPage", window.location.pathname);
+        });
+
+    // Restore scroll position on reload
+    window.addEventListener("load", () => {
+        const savedPage = sessionStorage.getItem("scrollPage");
+        const savedScrollY = sessionStorage.getItem("scrollPosition");
+
+        if (savedPage === window.location.pathname && savedScrollY !== null) {
+            setTimeout(() => {
+            window.scrollTo(0, parseInt(savedScrollY));
+            }, 1);
+        }
+    });
+
+
+
+  //to scroll the products in main page if it has more products
+  function scrollCarousel(sliderId,direction) {
+      const container = document.getElementById(sliderId);
+      const itemWidth = 300;
+
+      if (direction === "left") {
+          container.scrollBy({ left: -itemWidth, behavior: "smooth" });
+      } else {
+          container.scrollBy({ left: itemWidth, behavior: "smooth"});
+      }
+  }
+
+  function checkOverflow(sliderid) {
+    const slider = document.getElementById(sliderid);
+    const leftBtn = document.getElementById(sliderid+"leftscrollbtn");
+    const rightBtn = document.getElementById(sliderid+"rightscrollbtn");
+
+    
+    if (slider.scrollWidth > slider.clientWidth) {
+        leftBtn.style.display = "block";
+        rightBtn.style.display = "block";
+
+    } else {
+        leftBtn.style.display = "none";
+        rightBtn.style.display = "none";
+ 
+    }
+  }
+
+  function categorynavsection(category_id){
+    window.location.href=`/products/${category_id}/`;
+  }
+
+       
+
+    function startAutoScroll(sliderId) {
+      stopAutoScroll(); // avoid multiple intervals
+      autoScrollInterval = setInterval(() => {
+        const container = document.getElementById(sliderId);
+        const maxScrollLeft = container.scrollWidth - container.clientWidth;
+
+        // If we're close to the end, reset to start smoothly
+        if (Math.ceil(container.scrollLeft) >= maxScrollLeft) {
+          container.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          scrollCarousel(sliderId, 'right');
+        }
+      }, 3000);
+    }
+
+    function stopAutoScroll() {
+      if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+      }
+    }
+
+
+    const container = document.getElementById('reviews-container');
+let scrollSpeed = 1; // pixels per frame
+let scrollInterval;
+
+function startScroll() {
+  stopScroll(); // make sure no duplicate intervals
+
+  scrollInterval = setInterval(() => {
+    container.scrollLeft += scrollSpeed;
+
+    const maxScroll = container.scrollWidth - container.clientWidth;
+
+    // When it reaches the end, reset to start cleanly
+    if (container.scrollLeft >= maxScroll) {
+      container.scrollLeft = 0; // reset position
+    }
+
+  }, 20);
+}
+
+function stopScroll() {
+  clearInterval(scrollInterval);
+}
+
+container.addEventListener('mouseenter', stopScroll);
+container.addEventListener('mouseleave', startScroll);
+
+// Start on load
+startScroll();
+      
+
+    // Start auto-scroll for this slider
+    checkOverflow("slider1");
+    startAutoScroll('slider1');
+ 
+</script>
+{% endblock %}

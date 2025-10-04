@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Payment Success - Kani Medical</title>
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/payment_success_page.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+
+<div class="container">
+    <div class="success-image">✔
+    </div>
+    <h1 class="successpageheading">Thank You for Your Order!</h1>
+    <p class="successpageinfo">Your order has been successfully placed and will be delivered soon.</p>
+
+    <div class="details-box">
+      <div>
+        <h3>Order Details</h3>
+        <p><strong>Order Id:</strong> {{order.order_number}}</p>
+        <p><strong>Date:</strong> {{order.updated_at|date:"M d, Y h:i A"}}</p>
+        <p><strong>Amount:</strong> {{order.amount}}</p>
+        <p><strong>Payment Method:</strong> {{order.payment.method}}</p>
+      </div>
+      <div>
+        <h3>Delivery Address</h3>
+        <p>{{order.shippingaddress.firstname}} {% if order.shippingaddress.firstname %}{{order.shippingaddress.lastname|default:""}}{% endif %}</p>
+        
+        <p>{{order.shippingaddress.address}}</p>
+        <p>{{order.shippingaddress.city}} - {{order.shippingaddress.pincode}}</p>
+        <p>{{order.shippingaddress.state}}
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <a href="{% url 'order_tracking_page' order.id %}" class="btn btn-primary"><img src="{% static 'images/location_icon_white.png' %}" class="herobtnimage" alt=""> Track Order</a>
+      <a href="{% url 'products_page' %}" class="btn btn-secondary"><img src="{% static 'images/cart_active.png' %}" class="herobtnimage" alt=""> Continue Shopping</a>
+    </div>
+  </div>
+
+  {% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Contact Us - Kani Medical</title>
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/contactus_page.css' %}">
+{% endblock %}
+
+{% block content %}
+<main>
+  <section class="contact-section">
+      <h1 class="contactpageheading">Contact <span>Us</span></h1>
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.level == 25 %}
+            <span {% if message.tags %} class="messageconfirmation"{% endif %} id="absoluteerrortag"><img src="{% static 'images/check-circle.png' %}" alt="">{{ message }}</span>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+      <div class="contact-box">
+        <!-- Left: Contact Info -->
+        <div class="contact-info">
+          <h2>Contact Information</h2>
+          <p>Fill up the form and our team will get back to you.</p>
+          <ul>
+            <li><img src="{% static 'images/phone_icon_white.png' %}" alt="phone icon"> 73588 12618</li>
+            {% comment %} <li><img src="{% static 'images/mail_icon_white.png' %}" alt="email icon"> www.vetrigarden@gmail.com</li> {% endcomment %}
+            <li><img src="{% static 'images/location_icon_white.png' %}" alt="location icon"> 10/195, Kani Medical, Kamaraj Salai, Kurumpalaperi Vilakku, Pavoorchatram - Surandai - Shencottai, 627806</li>
+          </ul>
+
+          <h3>Our Locations</h3>
+          <div class="map-container">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3941.5705174542404!2d77.3867722!3d8.919457999999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b0427beba583003%3A0xaad0a02a4421fb8!2sKani%20Medicals!5e0!3m2!1sen!2sin!4v1759117154648!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+
+        <!-- Right: Contact Form -->
+        <div class="contact-form">
+          <form method="POST">
+            {% csrf_token %}
+            <label for="name">Name<span class="requiredfieldastrick">*</span></label>
+            <input type="text" id="name" name="name" value="{{ prefill.name }}" required placeholder="Enter your name">
+            {% if messages %}
+            {% for message in messages %}
+            {% if message.level == 40 and "Name" in message.message %}
+                <div {% if message.tags %} class="{{ message.tags }} "{% endif %}>{{ message }}</div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            <label for="email">Email Id<span class="requiredfieldastrick">*</span></label>
+            <input type="email" id="email" name="email" value="{{ prefill.email }}" required placeholder="abcd123@email.com">
+            {% if messages %}
+            {% for message in messages %}
+            {% if message.level == 40 and "email" in message.message %}
+                <div {% if message.tags %} class="{{ message.tags }} "{% endif %}>{{ message }}</div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            <label for="message">Your Message<span class="requiredfieldastrick">*</span></label>
+            <textarea id="message" name="message" rows="6" required placeholder="Enter your message here...">{{ prefill.message }}</textarea>
+            {% if messages %}
+            {% for message in messages %}
+            {% if message.level == 40 and "Message" in message.message %}
+                <div {% if message.tags %} class="{{ message.tags }} "{% endif %}>{{ message }}</div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            
+            <button type="submit">Send Message</button>
+          </form>
+          
+        </div>
+      </div>
+
+  </section>
+</main>
+{% endblock %}
+  
+{% block script %}
+  
+
+{% endblock %}

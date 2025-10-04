@@ -1,0 +1,222 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %}
+    {% endblock %}
+    <link href='https://fonts.googleapis.com/css2?family=Urbanist' rel='stylesheet'>
+    <link rel="icon" href="{% static 'images/logo.png' %}">
+    <link rel="stylesheet" href="{% static 'css/common_design.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    {% block style %}
+    {% endblock %}
+    
+</head>
+<body>
+    
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <img src="{% static 'images/logo.png' %}" alt="logo image">
+                <div class="companyname">
+                    <h2>KANI</h2><h2>MEDICAL</h2>
+                </div>
+                
+            </div>
+            <nav class="nav-links">
+                <a href="{% url 'home_page' %}" class="{% if request.resolver_match.url_name == 'home_page' %}active{% endif %}">Home</a>
+                <a href="{% url 'products_page' %}" class="{% if request.resolver_match.url_name == 'products_page' %}active{% endif %}{% if request.resolver_match.url_name == 'product_detail_page' %}active{% endif %}">Products</a>
+                <a href="{% url 'aboutus_page' %}" class="{% if request.resolver_match.url_name == 'aboutus_page' %}active{% endif %}">About Us</a>
+                <a href="{% url 'contactus_page' %}" class="{% if request.resolver_match.url_name == 'contactus_page' %}active{% endif %}">Contact Us</a>
+            </nav>
+
+            <div class="searchbar" id="main-searchbar">
+                <div class="searcharea">
+                    <img src="{% static 'images/search.png' %}" class="searchimage" alt="search icon">
+                    <input type="text" id="productSearchInput" placeholder="Search medicines...">
+                    <img src="{% static 'images/close_icon.png' %}" id="clearSearchInput" class="closeimage" alt="clear icon">
+                </div>
+                
+            </div>
+
+            <div class="nav-icons">
+                
+                <a href="{% url 'cart_page' %}" class="carticonbtn">
+                    {% if request.resolver_match.url_name == 'cart_page' or request.resolver_match.url_name == 'checkout_page' or request.resolver_match.url_name == 'cartcheckout_page' %}
+                    <img src="{% static 'images/cart_active.png' %}" alt="cart icon">
+                    {% else %}
+                    <img src="{% static 'images/cart.png' %}" alt="cart icon">
+                    {% endif %}
+                    <div class="cartitemcount">{{cart_items_count}}</div>
+                </a> 
+
+                <a href="{% url 'wishlist_page' %}" class="wishlisticonbtn">
+                    {% if request.resolver_match.url_name == 'wishlist_page' %}
+                    <img src="{% static 'images/heart_active_blue.png' %}" alt="wishlist icon">
+                    {% else %}
+                    <img src="{% static 'images/wishlist.png' %}" alt="wishlist icon">
+                    {% endif %}
+                    <div class="wishlistitemcount">{{wishlist_items_count}}</div>
+                </a> 
+
+                <a href="" class="alerticonbtn">
+                    {% if request.resolver_match.url_name == 'alert_page' %}
+                    <img src="{% static 'images/alert_active.png' %}" alt="alert icon">
+                    {% else %}
+                    <img src="{% static 'images/alert.png' %}" alt="alert icon">
+                    {% endif %}
+                    {% if alert_count %}
+                    <div class="alertcount">{{alert_count}}</div>
+                    {% endif %}
+                </a>
+                
+                {% if user.is_authenticated %}
+                <div class="dropdown">
+                    <div class="dropdown-toggle" onclick="toggleDropdown()">
+                        <div class="userdynamiccontentarea">
+                            <div class="userprofileimage">
+                                {% if user.user_profile_picture and user.user_profile_picture.name %}
+                                <img src="{{user.profile_picture_url}}" alt="{{user.user_profile_picture_label}}">
+                                {% else %}
+                                <img src="{% static 'images/user_image_default.png' %}" alt="{{user.user_profile_picture_label}}">
+                                {% endif %}
+                                
+                            </div>
+                            <p class="userprofilename">{{user.name}}</p>
+                        </div>
+                    </div>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="{% url 'user_profile_page' %}">My Profile</a>
+                        <a href="{% url 'user_logout' %}">Logout</a>
+                    </div>
+                </div>
+                               
+                {% else %}
+                <a href="{% url 'user_login' %}" class="signin-btn" id="signinbtn">
+                    <img src="{% static 'images/user.png' %}" alt="">
+                    Login
+                </a>
+                {% endif %}
+
+            </div>
+
+            <div class="hamburger">
+                <img src="{% static 'images/menu.png' %}" alt="menu icon">
+            </div>
+            
+
+        </div>
+    </header>
+   
+
+        {% block content %}
+        {% endblock %}
+
+
+    <footer class="footer">
+        <div class="footer-container">
+
+            <!-- Left: Logo -->
+            <div class="logo">
+                <img src="{% static 'images/logo.png' %}" alt="logo image">
+                <div class="companyname">
+                    <h2>KANI</h2><h2>MEDICAL</h2>
+                </div>
+            </div>
+
+            <!-- Middle: Quick Links -->
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{% url 'aboutus_page' %}">About Us</a></li>
+                    <li><a href="{% url 'products_page' %}">Products</a></li>
+                    <li><a href="{% url 'contactus_page' %}">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <!-- Right: Contact -->
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <ul>
+                    <li><img src="{% static 'images/phone_blue.png' %}" alt="phone icon"> 73588 12618</li>
+                    {% comment %} <li><img src="{% static 'images/mail_icon_white.png' %}" alt="email icon"> www.vetrigarden@gmail.com</li> {% endcomment %}
+                    <li><img src="{% static 'images/location_blue.png' %}" alt="location icon"> 10/195, Kani Medical, Kamaraj Salai,<br>Kurumpalaperi Vilakku, Pavoorchatram - Surandai - Shencottai, 627806</li>
+                </ul>
+            </div>
+
+        </div>
+    </footer>
+
+
+
+    
+
+
+    
+    
+    
+    <script>
+
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const errorTag = document.getElementById("absoluteerrortag");
+
+            if (errorTag && getComputedStyle(errorTag).display === "block") {
+                // Trigger fade out after 2s
+                setTimeout(() => {
+                    errorTag.classList.add("hide");
+                }, 2000);
+
+                // Then remove from layout after 1s of fading
+                setTimeout(() => {
+                    errorTag.style.display = "none";
+                }, 6000);
+            }
+        });
+
+
+        
+        //hamburger icon click to show menu options for small screen
+        hamburger.onclick = () => navLinks.classList.toggle('show');
+
+
+        const searchBar = document.getElementById("main-searchbar");
+            if (searchBar) {
+                searchBar.addEventListener('click', () => {
+                if (!window.location.pathname.includes('/products')) {
+                    window.location.href = "{% url 'products_page' %}";
+                }
+            });
+        }
+
+        // Optional: hide dropdown if clicked outside
+        document.addEventListener('click', function (e) {
+            const toggle = document.querySelector('.dropdown-toggle');
+            const menu = document.getElementById("dropdownMenu");
+
+            if (toggle && menu && !toggle.contains(e.target) && !menu.contains(e.target)) {
+                menu.style.display = "none";
+            }
+        }); 
+
+        function toggleDropdown() {
+            const menu = document.getElementById("dropdownMenu");
+            menu.style.display = (menu.style.display === "block") ? "none" : "block";
+        }
+
+             
+
+    </script>
+
+    {% block script %}
+    {% endblock %}
+    
+</body>
+</html>

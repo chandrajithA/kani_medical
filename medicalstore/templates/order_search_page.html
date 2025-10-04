@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Order Tracking - Kani Medical</title>
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/order_search_page.css' %}">
+{% endblock %}
+
+{% block content %}
+<main>
+    
+    <div class="track-container">
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.level == 25 %}
+            <span {% if message.tags %} class="messageconfirmation"{% endif %} id="absoluteerrortag"><img src="{% static 'images/check-circle.png' %}" alt="">{{ message }}</span>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+        <h1>Track Your Order</h1>
+        <form method="POST">
+        {% csrf_token %}  
+            <div class="search-bar">
+                <input type="text" id="orderInput" name="order_id" placeholder="Enter order id" value="">
+                <button type="submit" ><img src="{% static 'images/search_white.png' %}" alt=""></button>
+                
+            </div>
+        </form>
+
+        {% if order %}
+        <div class="tracking-container">
+
+            <div class="order-card">
+                <div class="order-left">
+                    
+                    <div class="order-info">
+                        <p>Order Id: <b>{{order.order_number}}</b></p> 
+                        <p>Customer Name: <b>{{order.shippingaddress.firstname}} {{orderitem.order.shippingaddress.lastname}}</b></p>
+                        <p>Customer contact: <b>{{order.shippingaddress.phone}}</b></p>
+                        <p>Total Items: <strong>{{total_quantity}} Nos</strong></p>      
+                        <div class="price">Total Amount: ₹{{order.amount}}</div>
+                    </div>
+                </div>
+
+                <div class="order-right">
+                    {% if order.delivery_status != "cancelled" and order.delivery_status != "delivered" and order.delivery_status != "failed" and order.delivery_status != "not confirmed" and order.status == "paid9" %}
+                    <p>Expected Delivery at <strong>{{order.estimated_delivery_date|date:"M d, Y"}}</strong></p>
+                    {% endif %}
+                    
+                    <p><b>Delivery Address:</b></p><p>{{order.shippingaddress.address}},</p><p>{{order.shippingaddress.city}} - {{order.shippingaddress.pincode}}</p><p>{{order.shippingaddress.state}}</p>
+                    
+                </div>
+            </div>
+
+            {% if order.delivery_status != 'failed' and order.delivery_status != "not confirmed" and order.order_payment_status != "pending" and order.order_payment_status != "failed" and order.status != "cancelled" and order.status != "failed" %}
+            <div class="progress-bar">
+
+                <div class="progress-track"></div>
+
+                <div class="progress-line" style="width:
+                    {% if order.delivery_status == 'confirmed' %}25%
+                    {% elif order.delivery_status == 'shipped' %}50%
+                    {% elif order.delivery_status == 'out for delivery' %}75%
+                    {% elif order.delivery_status == 'delivered' %}75%
+                    {% else %}0%
+                    {% endif %}
+                "></div>
+                    
+                <!-- Step 1 -->
+                <div class="step {% if order.delivery_status in 'confirmed shipped out for delivery delivered' %}active{% endif %}">
+                    <div class="icon">✔</div>
+                    <p class="deliverystatusarea">Order Confirm</p>
+                    <p class="statusdatearea">{{order.updated_at|date:"M d, Y h:i A"}}</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step {% if order.delivery_status in 'shipped out for delivery delivered' %}active{% endif %}">
+                    <div class="icon">📦</div>
+                    <p class="deliverystatusarea">Shipped</p>
+                    <p class="statusdatearea">{{order.shipped_date|date:"M d, Y h:i A"}}</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step {% if order.delivery_status in 'out for delivery delivered' %}active{% endif %}">
+                    <div class="icon">🚚</div>
+                    <p class="deliverystatusarea">Out for Delivery</p>
+                    <p class="statusdatearea">{{order.out_for_delivery_date|date:"M d, Y h:i A"}}</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step {% if order.delivery_status == 'delivered' %}active{% endif %}">
+                    <div class="icon">🏠</div>
+                    <p class="deliverystatusarea">Delivered</p>
+                    <p class="statusdatearea">{{order.delivery_date|date:"M d, Y h:i A"}}</p>
+                </div>
+            </div>
+
+            {% elif order.delivery_status in 'not confirmed' and order.order_payment_status in "pending" and order.status in "created" %}
+            <div class="tracking-cancel-container">
+                <div class="progress-bar">
+
+                    <div class="progress-track"></div>
+
+                    <!-- Dynamic progress line -->
+                    <div class="progress-line" style="width:
+                        {% if order.status == 'created' %}80%
+                        {% else %}0%
+                        {% endif %}
+                        ;background-color:var(--light-grey);">
+                    </div>
+
+                    <!-- Step 1 -->
+                    <div class="step {% if order.status in 'created' and order.delivery_status in 'not confirmed' %}active{% endif %}" style="text-align:left;">
+                    <div class="icon" style="text-align:center;background-color:var(--light-grey);">!</div>
+                    <p>Order Pending</p>
+                    <p>{{order.updated_at|date:"d F, Y"}}</p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="step {% if order.delivery_status in 'not confirmed' and order.status in 'created' and order.order_payment_status in 'pending' %}active{% endif %}" style="text-align:right;">
+                    <div class="icon" style="text-align:center;background-color:var(--light-grey)">!</div>
+                    <p>Waiting for payment.</p>
+                    <p>{{order.updated_at|date:"d F, Y"}}</p>
+                    </div>
+
+                </div>
+            </div>
+            {% elif order.delivery_status in 'failed' and order.order_payment_status in "failed" and order.status in "cancelled failed" %}
+            <div class="tracking-cancel-container">
+                <div class="progress-bar">
+
+                    <div class="progress-track"></div>
+
+                    <!-- Dynamic progress line -->
+                    <div class="progress-line" style="width:
+                        {% if order.status == 'cancelled' or order.status == 'failed' %}80%
+                        {% else %}0%
+                        {% endif %}
+                        ;background-color:red;">
+                    </div>
+
+                    <!-- Step 1 -->
+                    <div class="step {% if order.status in 'cancelled failed' and order.delivery_status in 'failed' %}active{% endif %}" style="text-align:left;">
+                    <div class="icon" style="text-align:center;background-color:red;">✔</div>
+                    <p>Order Confirm</p>
+                    <p>{{order.updated_at|date:"d F, Y"}}</p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="step {% if order.delivery_status in 'failed' and order.status in 'cancelled failed' %}active{% endif %}" style="text-align:right;">
+                    <div class="icon" style="text-align:center;background-color:red;">❌</div>
+                    {% if order.status == "failed" %}
+                    <p>Payment Failed.</p>
+                    <p>{{order.updated_at|date:"d F, Y"}}</p>
+                    {% elif order.status == "cancelled" %}
+                    <p>Payment Cancel by user.</p>
+                    <p>{{order.updated_at|date:"d F, Y"}}</p>
+                    {% endif %}
+                    </div>
+
+                </div>
+            </div>
+            {% endif %}
+            <div>
+                {% if order_items %}
+                
+                <div class="order-summary">
+                    <h3>Ordered Product:</h3>
+                    {% for order_item in order_items %}
+                    <div class="order-item">
+                        <div class="product-image">
+                            <img src="{{ order_item.product.product_main_image.url }}" alt="{{ order_item.product.product_name }}">
+                        </div>
+
+                        <div class="product-info">
+                            <h4 class="product-name">{{ order_item.product.product_name }}</h4>
+                            <p class="product-qty">{{ order_item.quantity }} Nos</p>
+                        </div>
+
+                        <div class="product-price">
+                            ₹{{ order_item.total_discount_price|floatformat:2 }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+        {% endif %}
+
+        
+
+    </div>
+
+</main>
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+
+
+
+
+
+
+
+

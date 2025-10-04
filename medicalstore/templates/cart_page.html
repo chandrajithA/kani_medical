@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Purchase Cart - Kani Medical</title>
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/cart_page.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main>   
+
+    <section class="cartsection">
+        <div class="container">
+            {% if messages %}
+            {% for message in messages %}
+                <span {% if message.tags %} class="absolute {{ message.tags }} "{% endif %} id="absoluteerrortag">{{ message }}</span>
+            {% endfor %}
+            {% endif %}
+            <div>
+                <h2>Cart - ({{cart_items_count}})</h2>
+                <a href="{% url 'clearcart' %}" class="cartclear-btn">Clear Cart</a>
+            </div>
+            
+            {% if cart_items %}
+            {% for cart_item in cart_items %}
+            <div class="cart-item">
+                <img src="{{cart_item.product.product_main_image.url}}" alt="{{cart_item.product.product_image_altername}}">
+                <div class="item-details itemname">
+                    <h4>{{ cart_item.product.product_name }}</h4>
+                    <p><strong>Desc :</strong> {{ cart_item.product.product_short_desc }}</p>
+                    <p>Quantity : {{ cart_item.quantity }} x {{ cart_item.product.product_price|floatformat:2 }}</p>
+                </div>
+                {% if cart_item.product.discount %}
+                <div class="strikepricearea">
+                    <div class="strike-price">₹ {{ cart_item.get_total_price|floatformat:2 }}</div>
+                    <p>{{cart_item.product.discount}}% OFF</p>
+                </div>
+                {% endif %}
+
+                
+                <div class="price">₹ {{ cart_item.get_total_discount_price|floatformat:2 }}</div>
+
+            </div>
+
+            <form id="removeorbuycartitem{{cart_item.product.id}}" method="POST" action="{% url 'remove_or_buy_item_in_cart' cart_item.product.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ cart_item.product.id }}">
+                <input type="hidden" name="quantity" value="{{ cart_item.quantity }}">
+            </form>
+
+            <div class="cart-itembtns item1">
+                
+
+                <div class="quantity">
+                    <form id="decreasecartitemqty{{cart_item.product.id}}" method="post" action="{% url 'decrease_item_qty_in_cart' cart_item.product.id %}">
+                    {% csrf_token %}
+                    <button form="decreasecartitemqty{{cart_item.product.id}}" type="submit">-</button>
+                    </form>
+                    
+                    <span>{{cart_item.quantity}}</span>
+
+                    <form id="increasecartitemqty{{cart_item.product.id}}" method="post" action="{% url 'increase_item_qty_in_cart' cart_item.product.id %}">
+                    {% csrf_token %}
+                    <button form="increasecartitemqty{{cart_item.product.id}}" type="submit">+</button>
+                    </form>
+                </div>
+
+                <div class="purchasebtnarea item3">
+                    <button form="removeorbuycartitem{{cart_item.product.id}}" class="product-addcart-btn" type="submit" name="action" value="remove_from_cart"><ion-icon name="cart"></ion-icon>Remove</button>
+                    <button form="removeorbuycartitem{{cart_item.product.id}}" class="product-buy-btn" type="submit" name="action" value="buy_now"><ion-icon name="cart"></ion-icon>Buy Now</button>
+                    
+                </div>
+            
+            </div>
+
+          
+          {% endfor %}
+          
+          <div class="total">
+            <div class="total-row">
+                <span class="label">Bill Amount:</span>
+                <span class="value">₹ {{total_amount|floatformat:2}}</span>
+            </div>
+            {% if discount_price %}
+            <div class="total-row">
+                <span class="label">Discount:</span>
+                <span class="value"><span class="discountpricetext">-₹ {{discount_price|floatformat:2}}</span></span>
+            </div>
+            {% endif %}
+            <div class="total-row">
+                <span class="label">Delivery:</span>
+                <span class="value">
+                {% if delivery_charge == 0 %}
+                    <span class="free">FREE</span>
+                {% else %}
+                    ₹ {{delivery_charge|floatformat:2}}
+                {% endif %}
+                </span>
+            </div>
+            <div class="total-row">
+                <span class="label">Total:</span>
+                <span class="value">₹ {{total_discount_price|floatformat:2}}</span>
+            </div>
+            
+            <div class="total-row amount-pay">
+                <span class="label">Amount to pay:</span>
+                <span class="value"><span class="totalpricetext">₹ {{total_amount_to_pay|floatformat:2}}</span></span>
+            </div>
+          </div>
+
+          <div class="checkout-container">
+            <a href="{% url 'checkout_page' %}" class="checkout-btn">Check Out</a>
+          </div>
+            
+        {% else %}
+        <div class="noproductimagearea">
+            <img src="{% static 'images/noproduct.png' %}" class="noproductimage" alt="No products found">
+        </div>
+        {% endif %}
+        </div>
+    </section>
+
+</main>
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

@@ -1,0 +1,54 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+.env/
+
+# Django stuff
+*.log
+*.pot
+*.pyc
+db.sqlite3
+/staticfiles/
+media/
+
+# VS Code
+.vscode/
+
+# MacOS
+.DS_Store
+
+# PyCharm
+.idea/
+
+# Byte-compiled / compiled
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.swo
+
+# Environment variables
+.env
+
+# Ignore database dumps if any
+*.sql
+*.sqlite3
+
+# Ignore pipenv files if you use pipenv
+Pipfile.lock
+
+# Ignore coverage reports
+htmlcov/
+.coverage
+
+# Ignore IDE/project specific files
+*.sublime-project
+*.sublime-workspace
+
+# Ignore node_modules if using frontend frameworks
+node_modules/
