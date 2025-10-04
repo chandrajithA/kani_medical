@@ -6,5 +6,6 @@ django_environ==0.12.0
 pymysql==1.1.2
 python-decouple==3.8
 razorpay==1.4.2
-gunicorn
-whitenoise
+gunicorn==23.0.0
+whitenoise==6.7.0
+psycopg2-binary==2.9.9
