@@ -39,6 +39,8 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 # Application definition
 
 INSTALLED_APPS = [
+    'cloudinary',
+    'cloudinary_storage',
     'medicalstore',
     'jazzmin',
     'django.contrib.admin',
@@ -55,12 +57,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.apple',
 ]
-
-INSTALLED_APPS += [
-    'cloudinary',
-    'cloudinary_storage',
-]
-
 
 
 
@@ -205,25 +201,25 @@ USE_I18N = True
 USE_TZ = True
 
 
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
+
+import cloudinary
+
+cloudinary.config(
+    secure=True,  # always use HTTPS
+    cloudinary_url=env("CLOUDINARY_URL")
+)
 
 # Use Cloudinary in production
 if not DEBUG:
 
-    import cloudinary
-
-
-    
-
-    cloudinary.config(
-        secure=True,  # always use HTTPS
-        cloudinary_url=env("CLOUDINARY_URL")
-    )
-
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
     MEDIA_URL = '/media/'  # Optional, URLs come from Cloudinary
 
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 
 # Use local media in development
 else:
