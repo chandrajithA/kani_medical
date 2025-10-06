@@ -125,7 +125,7 @@ class Product(models.Model):
         ('Bestseller', 'Bestseller'),
     ]
     category = models.ForeignKey(Category, on_delete=models.CASCADE,related_name="product")
-    product_name = models.CharField(max_length=500,null=False, blank=False,unique=True)
+    product_name = models.CharField(max_length=200,null=False, blank=False,unique=True)
     product_main_image = models.ImageField(upload_to=product_image_upload_path, null=False, blank=False)
     product_image1 = models.ImageField(upload_to=product_image_upload_path, null=True, blank=True)
     product_image2 = models.ImageField(upload_to=product_image_upload_path, null=True, blank=True)
