@@ -50,7 +50,7 @@ class User_detail(AbstractBaseUser, PermissionsMixin):
         ('Female', 'Female'),
     ]
 
-    user_profile_picture = models.ImageField( null=True, blank=True, upload_to=user_image_upload_path,default="defaults/user_image_default.png")
+    user_profile_picture = models.ImageField( null=True, blank=True, upload_to=user_image_upload_path)
     name = models.CharField(max_length=50,null=False, blank=False)
     phone = models.CharField(max_length=10, unique=True, null=True, blank=True)
     email = models.EmailField(unique=True, null=False, blank=False)
