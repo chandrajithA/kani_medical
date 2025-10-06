@@ -211,15 +211,19 @@ USE_TZ = True
 # Use Cloudinary in production
 if not DEBUG:
 
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    import cloudinary
 
-    CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-        'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-        'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
-    }
+
+    
+
+    cloudinary.config(
+        secure=True,  # always use HTTPS
+        cloudinary_url=env("CLOUDINARY_URL")
+    )
 
     MEDIA_URL = '/media/'  # Optional, URLs come from Cloudinary
+
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Use local media in development
 else:
