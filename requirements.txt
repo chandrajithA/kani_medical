@@ -16,3 +16,4 @@ setuptools<81
 Pillow>=10.0.0
 django-cloudinary-storage
 cloudinary
+python-dotenv
